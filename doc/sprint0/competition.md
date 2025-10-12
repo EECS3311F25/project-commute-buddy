@@ -1,6 +1,6 @@
-## Competition Analysis — CommuteBuddy
+# Competition Analysis — CommuteBuddy
 
-# Overview
+## Overview
 CommuteBuddy is a university-focused application that helps students find on-campus travel companions (“buddies”) who are heading in the same direction via public transportation (bus, subway, or train). It is not a carpooling or ride-sharing service — instead, it fosters safe, social, and sustainable commuting among students within the same university community.
 
 This section identifies existing products that address similar commuting or social-travel challenges, analyzes how they differ from our approach, and explains CommuteBuddy’s unique value proposition.
