@@ -2,7 +2,7 @@
 
 Our team created the user interface design using **Figma** to illustrate key scenarios and user flows for the *Commute Buddy* project.
 
-👉 [View full Figma project](https://www.figma.com/design/b898MTM4DidjEb1MfXcZPE/eecs3311-project?node-id=0-1&t=siV0W48Dw4vtuK3p-1)
+[View full Figma project](https://www.figma.com/design/b898MTM4DidjEb1MfXcZPE/eecs3311-project?node-id=0-1&t=siV0W48Dw4vtuK3p-1)
 
 ---
 
