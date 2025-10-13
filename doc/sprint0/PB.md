@@ -1,10 +1,10 @@
-1. As an unergistered user, I want to create an account using my university email so that only verified students can access the platform.
+1. As an unregistered user, I want to create an account using my university email so that only verified students can access the platform.
 
 2. As a registered user, I want to set up my commuting preferences (home area, campus schedule, and preferred bus routes) so that I can get accurate commute matches.
 
 3. As a returning registered user, I want to log in securely so that my personal commute data remains protected.
 
-4. As a , I want to find other students taking the same bus or route so that I can plan to commute together.
+4. As a registered user, I want to find other students taking the same bus or route so that I can plan to commute together.
 
 5. As a registered user, I want to filter potential matches by gender or faculty so that I feel more comfortable choosing a buddy.
 
@@ -34,6 +34,6 @@
 
 18. As a registered user, I want to control who can view my profile or see my route details so that I can maintain my privacy.
 
-19. As a registered user, I want to view my past commute sessions so that I can track who I traveled with and when.
+19. As a registered user, I want to view my past commute sessions so that I can track who I travelled with and when.
 
 20. As an admin, I want to view and manage user activity and reports so that I can ensure platform safety and compliance.
