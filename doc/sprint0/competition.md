@@ -80,6 +80,7 @@ Privacy and safety concerns (no identity verification).
 | Social aspect      | Limited or incidental                          | Encourages networking, conversation, and comfort during commutes      | 
 
 **3. Unique Value Proposition**
+
 Specific Users
 - Primary Users: University and college students who regularly commute between campus and home using public transportation.
 - Secondary Users: New international students, first-years, or commuters who value social connection or safety when traveling.
