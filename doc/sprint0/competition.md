@@ -6,6 +6,7 @@ CommuteBuddy is a university-focused application that helps students find on-cam
 This section identifies existing products that address similar commuting or social-travel challenges, analyzes how they differ from our approach, and explains CommuteBuddy’s unique value proposition.
 
 **1. Existing Solutions**
+
 1.1. Waze Carpool
 
 🔗 https://www.waze.com/carpool
@@ -79,6 +80,7 @@ Privacy and safety concerns (no identity verification).
 | Social aspect      | Limited or incidental                          | Encourages networking, conversation, and comfort during commutes      | 
 
 **3. Unique Value Proposition**
+
 Specific Users
 - Primary Users: University and college students who regularly commute between campus and home using public transportation.
 - Secondary Users: New international students, first-years, or commuters who value social connection or safety when traveling.
