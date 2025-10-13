@@ -6,6 +6,7 @@ CommuteBuddy is a university-focused application that helps students find on-cam
 This section identifies existing products that address similar commuting or social-travel challenges, analyzes how they differ from our approach, and explains CommuteBuddy’s unique value proposition.
 
 **1. Existing Solutions**
+
 1.1. Waze Carpool
 
 🔗 https://www.waze.com/carpool
