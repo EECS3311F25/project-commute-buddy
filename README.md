@@ -55,19 +55,16 @@ cd project-commute-buddy/
 
 # Install dependencies on backend and start server
 
-cd setup/
+cd setup/backend/
 npm install
 npm install express mongoose cors
 
 node server.js
 
-# Install dependencies on frontend and build frontend to run
+# Install dependencies on frontend and build frontend to run from backend
 
-cd frontend/
-npm install axios
+cd setup/frontend/
+npm install
 
 npm start
-
-# View documentation
-cd doc/sprint0
 ```

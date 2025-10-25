@@ -9,10 +9,7 @@ app.use(cors());
 app.use(json());
 
 // Connect to local MongoDB
-connect("mongodb://127.0.0.1:27017/testdb", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+connect("mongodb://127.0.0.1:27017/testdb")
 .then(() => console.log("MongoDB connected"))
 .catch(err => console.error(err));
 
