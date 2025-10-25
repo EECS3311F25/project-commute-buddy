@@ -53,18 +53,23 @@ git clone https://github.com/EECS3311F25/project-commute-buddy.git
 # Navigate to project folder
 cd project-commute-buddy/
 
-# Install dependencies on backend and start server
-
+# Install dependencies on backend. Go to project folder and enter:
 cd setup/backend/
 npm install
-npm install express mongoose cors
 
+# Start server
 node server.js
 
-# Install dependencies on frontend and build frontend to run from backend
-
+# Install dependencies on frontend. Go to project folder and enter:
 cd setup/frontend/
 npm install
 
+# Build frontend and run
 npm start
 ```
+
+## Known Issues
+
+> Sometimes the build from frontend opens the browser before it gets compiled. To fix this, either wait till it's compiled and reload the webpage, or type: `BROWSER=none npm start` and once it's compiled, click on the link shown on the console.
+
+> Currently the `/api/users` route used may be blocked by some web browsers and may result in an error in creating a user successfully. To resolve this, either disable your browsers ad blocker or open this in incognito mode.
