@@ -2,6 +2,12 @@
 import { Router } from "express";
 const router = Router();
 import User from "../models/User.js";
+import { protect } from "../middleware/authMiddleware.js";
+
+router.get("/content", protect, (req, res) => {
+  res.json({ message: "Secret content" });
+});
+
 
 router.post("/", async (req, res) => {
   try {
