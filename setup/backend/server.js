@@ -3,6 +3,7 @@ import express, { json } from "express";
 import { connect } from "mongoose";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
+import contentRoutes from "./routes/contentRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ connect("mongodb://127.0.0.1:27017/testdb")
 .catch(err => console.error(err));
 
 app.use("/api/users", userRoutes);
+app.use("api/content", contentRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

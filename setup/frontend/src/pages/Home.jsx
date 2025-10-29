@@ -15,7 +15,7 @@ function Home() {
     <div className="home">
       <h1>Welcome to Commute Buddy</h1>
       <p>Find your perfect commute buddy - safer, faster, together.</p>
-      <button onClick={goToSignup}>Get Started</button>
+      <button onClick={goToSignup}>Sign up!</button>
       <button onClick={gotoLogin}>Login</button>
       <p>Learn More</p>
     </div>
