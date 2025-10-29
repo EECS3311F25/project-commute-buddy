@@ -5,7 +5,7 @@ import User from "../models/User.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 router.get("/content", protect, (req, res) => {
-  res.json({ message: "Secret content" });
+  res.json({ message: "Secret content - have to modity this" });
 });
 
 
