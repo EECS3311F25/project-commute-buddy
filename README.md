@@ -42,10 +42,6 @@ Our system will follow the **MVC architecture** pattern, ensuring modular and ma
 
 ## Installation (Setup Instructions)
 
-> ⚠️ _Full deployment steps will be completed during Sprint 1._
-
-For now, to clone the repository and view Sprint 0 documents:
-
 ```bash
 # Clone the repo
 git clone https://github.com/EECS3311F25/project-commute-buddy.git
@@ -57,7 +53,8 @@ cd project-commute-buddy/
 cd setup/backend/
 npm install
 
-# Create your own .env file using the .env.example file given. PLEASE SET YOUR OWN VALUES FOR THE JWT_SECRET key for security:
+# Create your own .env file using the .env.example file given. PLEASE SET YOUR OWN VALUES FOR THE JWT_SECRET key for security. 
+# File must be placed in backend/:
 cat .env.example > .env
 
 # Start server
