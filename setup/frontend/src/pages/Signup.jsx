@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 
 function Signup(){
-  const [form, setForm] = useState({ name: "", email: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,9 +13,10 @@ function Signup(){
     try {
       const res = await axios.post("http://localhost:5000/api/users", form);
       alert(`User created: ${res.data.name}`);
-      setForm({ name: "", email: "" });
+      setForm({ name: "", email: "", password: "" });
     } catch (err) {
-      alert("Error creating user");
+      alert("Error creating user. Reason: " + err);
+      console.error();
     }
   };
 
@@ -37,6 +38,14 @@ function Signup(){
           value={form.email}
           onChange={handleChange}
           required
+        />
+        <br /><br />
+        <input
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
         />
         <br /><br />
         <button type="submit">Submit</button>
