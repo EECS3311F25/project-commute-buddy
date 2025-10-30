@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-function Signup(){
+function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const handleChange = (e) => {
@@ -11,12 +11,27 @@ function Signup(){
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/users", form);
-      alert(`User created: ${res.data.name}`);
+      const res = await axios.post(
+        "http://localhost:5000/api/users/register",
+        form
+      );
+      alert("✅ Signup successful!");
+      console.log("Token:", res.data.token);
+
+      //Clear form fields if successful
       setForm({ name: "", email: "", password: "" });
-    } catch (err) {
-      alert("Error creating user. Reason: " + err);
-      console.error();
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 400) {
+          alert("⚠️ User already exists. Please log in.");
+        } else if (error.response.status === 500) {
+          alert("❌ Server error. Please try again later.");
+        } else {
+          alert("⚠️ Unexpected error occurred.");
+        }
+      } else {
+        alert("❌ Cannot connect to server.");
+      }
     }
   };
 
@@ -31,7 +46,8 @@ function Signup(){
           onChange={handleChange}
           required
         />
-        <br /><br />
+        <br />
+        <br />
         <input
           name="email"
           placeholder="Email"
@@ -39,15 +55,18 @@ function Signup(){
           onChange={handleChange}
           required
         />
-        <br /><br />
+        <br />
+        <br />
         <input
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
         />
-        <br /><br />
+        <br />
+        <br />
         <button type="submit">Submit</button>
       </form>
     </div>
