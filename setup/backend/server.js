@@ -15,7 +15,7 @@ connect("mongodb://127.0.0.1:27017/testdb")
 .catch(err => console.error(err));
 
 app.use("/api/users", userRoutes);
-app.use("api/content", contentRoutes);
+app.use("/api/content", contentRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
