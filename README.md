@@ -57,6 +57,9 @@ cd project-commute-buddy/
 cd setup/backend/
 npm install
 
+# Create your own .env file using the .env.example file given. PLEASE SET YOUR OWN VALUES FOR THE JWT_SECRET key for security:
+cat .env.example > .env
+
 # Start server
 node server.js
 
