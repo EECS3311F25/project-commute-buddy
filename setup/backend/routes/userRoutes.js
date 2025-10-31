@@ -1,23 +1,9 @@
-// backend/routes/userRoutes.js
 import { Router } from "express";
 const router = Router();
-import User from "../models/User.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { registerUser, getContent } from "../controllers/userController.js";
 
-router.get("/content", protect, (req, res) => {
-  res.json({ message: "Secret content - have to modity this" });
-});
-
-
-router.post("/", async (req, res) => {
-  try {
-    const { name, email } = req.body;
-    const newUser = new User({ name, email });
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.post("/register", registerUser);
+router.get("/content", protect, getContent);
 
 export default router;
