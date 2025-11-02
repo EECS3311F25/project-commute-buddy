@@ -17,8 +17,6 @@ function Signup() {
       );
       alert("✅ Signup successful!");
       console.log("Token:", res.data.token);
-
-      //Clear form fields if successful
       setForm({ name: "", email: "", password: "" });
     } catch (error) {
       if (error.response) {
@@ -35,40 +33,100 @@ function Signup() {
     }
   };
 
+  
+  const heroMainUrl =
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuCEQUcuTBGSPHgAWyM6TZmHI5LDo0iTX_220OcBJllFsLHSuyoz4TrP-C3lFlJkC1TZLOSxHZfCdcjz2IPsGTs2zlRnin6CHzxy2sOk5-r20dfIN4UZ-rYboIDsD7_rrLrCzCg6uK88NSJFccqv5Aj4hJtEu12FipUR1cG1e0tsXx_J3v9mzxPAfGm1P_zHVczkURN3pwXcfwKCpNpR6jPt6-2pJomPQd3UXn_SQHHE-P8ouUkDhzQCqy-cEvD6hUu-bBCf2g_zf-M";
+
   return (
-    <div style={{ margin: "50px" }}>
-      <h2>Create User</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <br />
-        <input
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <br />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <br />
-        <button type="submit">Submit</button>
-      </form>
+    <div
+      className="min-h-screen w-full bg-[#fbf8f9] flex flex-col items-center"
+      style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}
+    >
+      
+
+      {/* Main hero with overlay title */}
+      <div className="w-full max-w-[960px] px-4 pt-4">
+        <div
+          className="rounded-lg bg-center bg-cover pt-[120px]"
+          style={{
+            backgroundImage: `linear-gradient(0deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%), url("${heroMainUrl}")`,
+          }}
+        >
+          <div className="p-4">
+            <h1 className="text-white text-2xl font-bold">Create your account</h1>
+            <p className="text-white/95 text-base">
+              Join Commute Buddy and connect with fellow YorkU commuters.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Form card */}
+      <div className="w-full max-w-[520px] px-4 py-6">
+        <div className="rounded-lg border border-[#e6d1d2] bg-white/70 backdrop-blur p-5 shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name */}
+            <label className="block">
+              <span className="text-[#955056] text-sm font-medium">Name</span>
+              <div className="mt-1 flex items-stretch rounded-lg">
+                <input
+                  name="name"
+                  placeholder="Your full name"
+                  value={form.name}
+                  onChange={handleChange}
+                  required
+                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                />
+              </div>
+            </label>
+
+            {/* Email */}
+            <label className="block">
+              <span className="text-[#955056] text-sm font-medium">Email</span>
+              <div className="mt-1 flex items-stretch rounded-lg">
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="you@yorku.ca"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                />
+              </div>
+            </label>
+
+            {/* Password */}
+            <label className="block">
+              <span className="text-[#955056] text-sm font-medium">Password</span>
+              <div className="mt-1 flex items-stretch rounded-lg">
+                <input
+                  name="password"
+                  type="password"
+                  placeholder="Create a strong password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                />
+              </div>
+            </label>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full h-11 rounded-lg bg-[#ce1c2b] text-[#fbf8f9] font-bold tracking-wide"
+            >
+              Create account
+            </button>
+          </form>
+
+          {/* Footnote */}
+          <p className="text-center text-sm text-[#955056] mt-3">
+            Already have an account? <span className="underline">Log in</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
