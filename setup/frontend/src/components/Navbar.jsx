@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -7,6 +7,7 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
+    localStorage.removeItem("user");
   };
 
   return (
@@ -18,18 +19,26 @@ function Navbar() {
       </div>
 
       <div style={styles.links}>
-        <Link to="/home" style={styles.link}>Home</Link>
+        <Link to="/home" style={styles.link}>
+          Home
+        </Link>
 
         {!token && (
           <>
-            <Link to="/signup" style={styles.link}>Sign Up</Link>
-            <Link to="/login" style={styles.link}>Login</Link>
+            <Link to="/signup" style={styles.link}>
+              Sign Up
+            </Link>
+            <Link to="/login" style={styles.link}>
+              Login
+            </Link>
           </>
         )}
 
         {token && (
           <>
-            <Link to="/content" style={styles.link}>Content</Link>
+            <Link to="/content" style={styles.link}>
+              Content
+            </Link>
             <button onClick={handleLogout} style={styles.logoutBtn}>
               Logout
             </button>

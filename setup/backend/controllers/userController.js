@@ -1,33 +1,68 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import {generateToken} from "../utils/generateToken.js";
 
 export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+    const {name, email, password} = req.body;
 
-  try {
-    // check if user exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
+    try {
+        // check if user exists
+        const existingUser = await User.findOne({email});
+        if (existingUser)
+            return res.status(400).json({message: "User already exists"});
 
-    // hash password and save
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ name, email, password: hashedPassword });
+        // hash password and save
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+        });
 
-    // create JWT
-    const token = jwt.sign(
-      { id: newUser._id },
-      process.env.JWT_SECRET, //this requires an .env file for you to implement. Example is given in '.env.example' file
-      { expiresIn: "1h" }  
-    );
+        // create JWT
+        const token = generateToken(user._id); //this requires an .env file for you to implement. Example is given in '.env.example' file
 
-    res.status(201).json({ token });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+        res.status(201).json({token});
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    }
+};
+
+export const loginUser = async (req, res) => {
+    const {email, password} = req.body;
+
+    try {
+        // check if user exists
+        const user = await User.findOne({email});
+        if (!user)
+            return res.status(400).json({message: "Invalid credentials"});
+
+        // compare passwords
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch)
+            return res.status(400).json({message: "Invalid credentials"});
+
+        // create JWT
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+
+        res.status(200).json({
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+            },
+        });
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    }
 };
 
 export const getContent = (req, res) => {
-  res.json({ message: "Secret content accessible only to authenticated users!" });
+    res.json({
+        message: "Secret content accessible only to authenticated users!",
+    });
 };
