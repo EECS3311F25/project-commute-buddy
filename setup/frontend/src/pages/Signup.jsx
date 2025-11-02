@@ -33,9 +33,7 @@ function Signup() {
     }
   };
 
-  // Optional: same hero images used on Login (keeps the look consistent)
-  const heroTopUrl =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuB52LWjz87cOO1q04iX_C-z-ifkFkn4D7SmpjhWst70yOV3k7npSr3MlKThM1F1VdZGjguRoYL45hoqXHmPBXyfeMux_xjyFGv6_WUrcOwl90qtTswdPjD-rYAQGulmuQUzutevhgbAozb4rDBumQvaFvfHRnvKu6jnsTvOw3qPMR0agNyhsEVLcqZ_PkE50RILM69dcRb4y30io7L1b62wT4V-4Fhz00xXwN1crcwpCOvFJETHUq4M0LuUl_Sv4D53bwOno4komG4";
+  
   const heroMainUrl =
     "https://lh3.googleusercontent.com/aida-public/AB6AXuCEQUcuTBGSPHgAWyM6TZmHI5LDo0iTX_220OcBJllFsLHSuyoz4TrP-C3lFlJkC1TZLOSxHZfCdcjz2IPsGTs2zlRnin6CHzxy2sOk5-r20dfIN4UZ-rYboIDsD7_rrLrCzCg6uK88NSJFccqv5Aj4hJtEu12FipUR1cG1e0tsXx_J3v9mzxPAfGm1P_zHVczkURN3pwXcfwKCpNpR6jPt6-2pJomPQd3UXn_SQHHE-P8ouUkDhzQCqy-cEvD6hUu-bBCf2g_zf-M";
 
@@ -44,13 +42,7 @@ function Signup() {
       className="min-h-screen w-full bg-[#fbf8f9] flex flex-col items-center"
       style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}
     >
-      {/* Top strip image (matches Login) */}
-      <div className="w-full max-w-[960px] px-4 pt-6">
-        <div
-          className="w-full bg-center bg-cover rounded-lg min-h-[180px]"
-          style={{ backgroundImage: `url("${heroTopUrl}")` }}
-        />
-      </div>
+      
 
       {/* Main hero with overlay title */}
       <div className="w-full max-w-[960px] px-4 pt-4">

@@ -8,13 +8,12 @@ function Login() {
   const goToSignup = () => navigate("/signup");
   const gotoHome = () => navigate("/home");
 
-  const heroTopUrl =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuB52LWjz87cOO1q04iX_C-z-ifkFkn4D7SmpjhWst70yOV3k7npSr3MlKThM1F1VdZGjguRoYL45hoqXHmPBXyfeMux_xjyFGv6_WUrcOwl90qtTswdPjD-rYAQGulmuQUzutevhgbAozb4rDBumQvaFvfHRnvKu6jnsTvOw3qPMR0agNyhsEVLcqZ_PkE50RILM69dcRb4y30io7L1b62wT4V-4Fhz00xXwN1crcwpCOvFJETHUq4M0LuUl_Sv4D53bwOno4komG4";
+  
   const heroMainUrl =
     "https://lh3.googleusercontent.com/aida-public/AB6AXuCEQUcuTBGSPHgAWyM6TZmHI5LDo0iTX_220OcBJllFsLHSuyoz4TrP-C3lFlJkC1TZLOSxHZfCdcjz2IPsGTs2zlRnin6CHzxy2sOk5-r20dfIN4UZ-rYboIDsD7_rrLrCzCg6uK88NSJFccqv5Aj4hJtEu12FipUR1cG1e0tsXx_J3v9mzxPAfGm1P_zHVczkURN3pwXcfwKCpNpR6jPt6-2pJomPQd3UXn_SQHHE-P8ouUkDhzQCqy-cEvD6hUu-bBCf2g_zf-M";
 
   const onContinue = () => {
-    // keep your current behavior: go to home
+    
     gotoHome();
   };
 
@@ -30,17 +29,7 @@ function Login() {
       <div className="layout-container flex h-full grow flex-col">
         <div className="px-40 flex flex-1 justify-center py-5">
           <div className="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
-            {/* Top banner */}
-            <div className="@container">
-              <div className="@[480px]:px-4 @[480px]:py-3">
-                <div
-                  className="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden bg-[#fbf8f9] @[480px]:rounded-lg min-h-[218px]"
-                  style={{
-                    backgroundImage: `url("${heroTopUrl}")`,
-                  }}
-                />
-              </div>
-            </div>
+            
 
             {/* Main hero with overlay text */}
             <div className="p-4">
