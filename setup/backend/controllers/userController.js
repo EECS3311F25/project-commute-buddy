@@ -21,7 +21,7 @@ export const registerUser = async (req, res) => {
         });
 
         // create JWT
-        const token = generateToken(user._id); //this requires an .env file for you to implement. Example is given in '.env.example' file
+        const token = generateToken(User._id); //this requires an .env file for you to implement. Example is given in '.env.example' file
 
         res.status(201).json({token});
     } catch (err) {
