@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Signup() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const navigate = useNavigate();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -11,6 +16,13 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      alert("❌ Passwords Do Not Match!");
+      setForm({ ...form , password: "", confirmPassword: "" }); //partial reset instead of total reset
+      return;
+    }
+
     try {
       const res = await axios.post(
         "http://localhost:5000/api/users/register",
@@ -18,7 +30,7 @@ function Signup() {
       );
       alert("✅ Signup successful!");
       console.log("Token:", res.data.token);
-      setForm({ name: "", email: "", password: "" });
+      setForm({ name: "", email: "", password: "", confirmPassword: ""});
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -107,6 +119,24 @@ function Signup() {
                   type="password"
                   placeholder="Create a strong password"
                   value={form.password}
+                  onChange={handleChange}
+                  required
+                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                />
+              </div>
+            </label>
+
+            {/* Confirm Password */}
+            <label className="block">
+              <span className="text-[#955056] text-sm font-medium">
+                Confirm Password
+              </span>
+              <div className="mt-1 flex items-stretch rounded-lg">
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Re-enter password"
+                  value={form.confirmPassword}
                   onChange={handleChange}
                   required
                   className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"

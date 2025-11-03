@@ -47,7 +47,7 @@ function Home() {
             <div className="flex justify-center">
               <div className="flex flex-1 gap-3 max-w-[480px] flex-col items-stretch px-4 py-3">
                 <button
-                  onClick={gotoLogin}
+                  onClick={goToSignup}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#ce1c2b] text-[#fbf8f9] text-sm font-bold leading-normal tracking-[0.015em] w-full"
                 >
                   <span className="truncate">Sign In with York Email</span>
@@ -110,7 +110,8 @@ function Home() {
                       Commute Together
                     </p>
                     <p className="text-[#955056] text-sm font-normal leading-normal">
-                      Enjoy safer, more social, and predictable commutes together.
+                      Enjoy safer, more social, and predictable commutes
+                      together.
                     </p>
                   </div>
                 </div>
