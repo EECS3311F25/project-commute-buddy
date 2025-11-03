@@ -1,37 +1,49 @@
 // src/components/admin/UserTable.jsx
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function UserTable() {
+function UserTable() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace with backend API call - mock data to test
-    setUsers([
-      { id: 1, name: "Alice", email: "alice@example.com", status: "active" },
-      { id: 2, name: "Bob", email: "bob@example.com", status: "suspended" },
-    ]);
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("/api/users/all", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUsers(res.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
   }, []);
 
+  if (loading) return <p>Loading users...</p>;
+
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h2 className="text-lg font-semibold mb-4">User Management</h2>
-      <table className="w-full border-collapse">
+    <div className="overflow-x-auto">
+      <table className="min-w-full border rounded-lg bg-white">
         <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2">Name</th>
-            <th className="p-2">Email</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Action</th>
+          <tr className="bg-gray-100 text-left text-gray-600 uppercase text-sm">
+            <th className="py-3 px-4">Name</th>
+            <th className="py-3 px-4">Email</th>
+            <th className="py-3 px-4">Role</th>
+            <th className="py-3 px-4">Created</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
-            <tr key={u.id} className="border-b hover:bg-gray-50">
-              <td className="p-2">{u.name}</td>
-              <td className="p-2">{u.email}</td>
-              <td className="p-2">{u.status}</td>
-              <td className="p-2">
-                <button className="text-blue-600 hover:underline">Edit</button>
+          {users.map((user) => (
+            <tr key={user._id} className="border-t">
+              <td className="py-2 px-4">{user.name}</td>
+              <td className="py-2 px-4">{user.email}</td>
+              <td className="py-2 px-4">{user.role}</td>
+              <td className="py-2 px-4">
+                {new Date(user.createdAt).toLocaleDateString()}
               </td>
             </tr>
           ))}
@@ -40,3 +52,5 @@ export default function UserTable() {
     </div>
   );
 }
+
+export default UserTable;
