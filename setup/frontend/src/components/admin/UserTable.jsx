@@ -10,9 +10,11 @@ function UserTable() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("/api/users/all", {
+
+        const res = await axios.get("http://localhost:5000/api/users/all", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setUsers(res.data);
       } catch (error) {
         console.error("Error fetching users:", error);
