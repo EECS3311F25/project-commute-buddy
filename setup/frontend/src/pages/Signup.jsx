@@ -9,7 +9,14 @@ function Signup() {
     password: "",
     confirmPassword: "",
   });
+
+  const [error, setError] = useState({
+    email: "",
+    password: "",
+  });
+
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -17,9 +24,27 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Reset previous errors
+    setError({ email: "", password: "" });
+
+    // Validate email domain
+    const emailLower = form.email.toLowerCase();
+    if (
+      !emailLower.endsWith("@yorku.ca") &&
+      !emailLower.endsWith("@my.yorku.ca")
+    ) {
+      setError({
+        ...error,
+        email: "Email must end with @yorku.ca or @my.yorku.ca",
+      });
+      setForm({ ...form, email: "" });
+      return;
+    }
+
+    // Validate password match
     if (form.password !== form.confirmPassword) {
-      alert("❌ Passwords Do Not Match!");
-      setForm({ ...form, password: "", confirmPassword: "" }); //partial reset instead of total reset
+      setError({ ...error, password: "Passwords do not match" });
+      setForm({ ...form, password: "", confirmPassword: "" });
       return;
     }
 
@@ -104,9 +129,14 @@ function Signup() {
                   value={form.email}
                   onChange={handleChange}
                   required
-                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                  className={`form-input w-full rounded-lg h-12 border ${
+                    error.email ? "border-red-500" : "border-[#e6d1d2]"
+                  } bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 px-3`}
                 />
               </div>
+              {error.email && (
+                <p className="text-red-500 text-sm mt-1">{error.email}</p>
+              )}
             </label>
 
             {/* Password */}
@@ -123,7 +153,9 @@ function Signup() {
                   onChange={handleChange}
                   autoComplete="new-password"
                   required
-                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                  className={`form-input w-full rounded-lg h-12 border ${
+                    error.password ? "border-red-500" : "border-[#e6d1d2]"
+                  } bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 px-3`}
                 />
               </div>
             </label>
@@ -142,9 +174,14 @@ function Signup() {
                   onChange={handleChange}
                   autoComplete="new-password"
                   required
-                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                  className={`form-input w-full rounded-lg h-12 border ${
+                    error.password ? "border-red-500" : "border-[#e6d1d2]"
+                  } bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 px-3`}
                 />
               </div>
+              {error.password && (
+                <p className="text-red-500 text-sm mt-1">{error.password}</p>
+              )}
             </label>
 
             {/* Submit */}
