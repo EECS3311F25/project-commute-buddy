@@ -54,10 +54,10 @@ function Home() {
                 </button>
 
                 <button
-                  onClick={goToSignup}
+                  onClick={gotoLogin}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f3e8e9] text-[#1b0e0f] text-sm font-bold leading-normal tracking-[0.015em] w-full"
                 >
-                  <span className="truncate">Continue as Guest (Demo)</span>
+                  <span className="truncate">Continue to Login</span>
                 </button>
 
                 {/* Keep "Learn More" as plain text to match your current behavior */}

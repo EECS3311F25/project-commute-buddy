@@ -19,7 +19,7 @@ function Signup() {
 
     if (form.password !== form.confirmPassword) {
       alert("❌ Passwords Do Not Match!");
-      setForm({ ...form , password: "", confirmPassword: "" }); //partial reset instead of total reset
+      setForm({ ...form, password: "", confirmPassword: "" }); //partial reset instead of total reset
       return;
     }
 
@@ -30,7 +30,7 @@ function Signup() {
       );
       alert("✅ Signup successful!");
       console.log("Token:", res.data.token);
-      setForm({ name: "", email: "", password: "", confirmPassword: ""});
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -100,6 +100,7 @@ function Signup() {
                   name="email"
                   type="email"
                   placeholder="you@yorku.ca"
+                  autoComplete="username"
                   value={form.email}
                   onChange={handleChange}
                   required
@@ -120,6 +121,7 @@ function Signup() {
                   placeholder="Create a strong password"
                   value={form.password}
                   onChange={handleChange}
+                  autoComplete="new-password"
                   required
                   className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
                 />
@@ -138,6 +140,7 @@ function Signup() {
                   placeholder="Re-enter password"
                   value={form.confirmPassword}
                   onChange={handleChange}
+                  autoComplete="new-password"
                   required
                   className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
                 />
