@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -33,7 +34,6 @@ function Signup() {
     }
   };
 
-  
   const heroMainUrl =
     "https://lh3.googleusercontent.com/aida-public/AB6AXuCEQUcuTBGSPHgAWyM6TZmHI5LDo0iTX_220OcBJllFsLHSuyoz4TrP-C3lFlJkC1TZLOSxHZfCdcjz2IPsGTs2zlRnin6CHzxy2sOk5-r20dfIN4UZ-rYboIDsD7_rrLrCzCg6uK88NSJFccqv5Aj4hJtEu12FipUR1cG1e0tsXx_J3v9mzxPAfGm1P_zHVczkURN3pwXcfwKCpNpR6jPt6-2pJomPQd3UXn_SQHHE-P8ouUkDhzQCqy-cEvD6hUu-bBCf2g_zf-M";
 
@@ -42,8 +42,6 @@ function Signup() {
       className="min-h-screen w-full bg-[#fbf8f9] flex flex-col items-center"
       style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}
     >
-      
-
       {/* Main hero with overlay title */}
       <div className="w-full max-w-[960px] px-4 pt-4">
         <div
@@ -53,7 +51,9 @@ function Signup() {
           }}
         >
           <div className="p-4">
-            <h1 className="text-white text-2xl font-bold">Create your account</h1>
+            <h1 className="text-white text-2xl font-bold">
+              Create your account
+            </h1>
             <p className="text-white/95 text-base">
               Join Commute Buddy and connect with fellow YorkU commuters.
             </p>
@@ -98,7 +98,9 @@ function Signup() {
 
             {/* Password */}
             <label className="block">
-              <span className="text-[#955056] text-sm font-medium">Password</span>
+              <span className="text-[#955056] text-sm font-medium">
+                Password
+              </span>
               <div className="mt-1 flex items-stretch rounded-lg">
                 <input
                   name="password"
@@ -122,9 +124,14 @@ function Signup() {
           </form>
 
           {/* Footnote */}
-          <p className="text-center text-sm text-[#955056] mt-3">
-            Already have an account? <span className="underline">Log in</span>
-          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="cursor-pointer text-[#955056] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center underline"
+          >
+            <p className="text-center text-sm text-[#955056] mt-3">
+              Already have an account? <span className="underline">Log in</span>
+            </p>
+          </button>
         </div>
       </div>
     </div>
