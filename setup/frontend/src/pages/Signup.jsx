@@ -3,14 +3,51 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Signup() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [error, setError] = useState({
+    email: "",
+    password: "",
+  });
+
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Reset previous errors
+    setError({ email: "", password: "" });
+
+    // Validate email domain
+    const emailLower = form.email.toLowerCase();
+    if (
+      !emailLower.endsWith("@yorku.ca") &&
+      !emailLower.endsWith("@my.yorku.ca")
+    ) {
+      setError({
+        ...error,
+        email: "Email must end with @yorku.ca or @my.yorku.ca",
+      });
+      setForm({ ...form, email: "" });
+      return;
+    }
+
+    // Validate password match
+    if (form.password !== form.confirmPassword) {
+      setError({ ...error, password: "Passwords do not match" });
+      setForm({ ...form, password: "", confirmPassword: "" });
+      return;
+    }
+
     try {
       const res = await axios.post(
         "http://localhost:5000/api/users/register",
@@ -18,7 +55,7 @@ function Signup() {
       );
       alert("✅ Signup successful!");
       console.log("Token:", res.data.token);
-      setForm({ name: "", email: "", password: "" });
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
@@ -88,12 +125,18 @@ function Signup() {
                   name="email"
                   type="email"
                   placeholder="you@yorku.ca"
+                  autoComplete="username"
                   value={form.email}
                   onChange={handleChange}
                   required
-                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                  className={`form-input w-full rounded-lg h-12 border ${
+                    error.email ? "border-red-500" : "border-[#e6d1d2]"
+                  } bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 px-3`}
                 />
               </div>
+              {error.email && (
+                <p className="text-red-500 text-sm mt-1">{error.email}</p>
+              )}
             </label>
 
             {/* Password */}
@@ -108,10 +151,37 @@ function Signup() {
                   placeholder="Create a strong password"
                   value={form.password}
                   onChange={handleChange}
+                  autoComplete="new-password"
                   required
-                  className="form-input w-full rounded-lg h-12 border border-[#e6d1d2] bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 focus:border-[#e6d1d2] px-3"
+                  className={`form-input w-full rounded-lg h-12 border ${
+                    error.password ? "border-red-500" : "border-[#e6d1d2]"
+                  } bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 px-3`}
                 />
               </div>
+            </label>
+
+            {/* Confirm Password */}
+            <label className="block">
+              <span className="text-[#955056] text-sm font-medium">
+                Confirm Password
+              </span>
+              <div className="mt-1 flex items-stretch rounded-lg">
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Re-enter password"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  required
+                  className={`form-input w-full rounded-lg h-12 border ${
+                    error.password ? "border-red-500" : "border-[#e6d1d2]"
+                  } bg-[#fbf8f9] text-[#1b0e0f] placeholder:text-[#955056] focus:ring-0 px-3`}
+                />
+              </div>
+              {error.password && (
+                <p className="text-red-500 text-sm mt-1">{error.password}</p>
+              )}
             </label>
 
             {/* Submit */}
