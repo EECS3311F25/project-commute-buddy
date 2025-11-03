@@ -26,7 +26,12 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       // Redirect to content if successful login
-      navigate("/content");
+      if (res.data.user.role === "admin") {
+        console.log("I AM AN ADMIN");
+        navigate("/admin");
+      } else {
+        navigate("/content");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
