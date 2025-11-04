@@ -43,8 +43,8 @@ export const loginUser = async (req, res) => {
         if (!isMatch)
             return res.status(400).json({message: "Invalid credentials"});
 
-        // create JWT
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
+        // create JWT with role
+        const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
 
@@ -54,6 +54,7 @@ export const loginUser = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                role: user.role, //include role now
             },
         });
     } catch (err) {
@@ -65,4 +66,13 @@ export const getContent = (req, res) => {
     res.json({
         message: "Secret content accessible only to authenticated users!",
     });
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, "-password"); // exclude passwords
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users" });
+  }
 };
