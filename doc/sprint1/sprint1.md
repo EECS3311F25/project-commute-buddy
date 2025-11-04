@@ -22,12 +22,12 @@
 
 ## Participants
 
-| Name | Role | Attendance | Participation |
-| --- | --- | --- | --- |
-| Ashraf | Product Owner / Developer | ✓ | ✓ Active |
-| Ali | Developer | ✓ | ✓ Active |
-| Shaun | Developer | ✓ | ✓ Active |
-| Sathmi | Developer | ✓ | ✓ Active |
+| Name   | Role                      | Attendance | Participation |
+| ------ | ------------------------- | ---------- | ------------- |
+| Ashraf | Product Owner / Developer | ✓          | ✓ Active      |
+| Ali    | Developer                 | ✓          | ✓ Active      |
+| Shaun  | Developer                 | ✓          | ✓ Active      |
+| Sathmi | Developer                 | ✓          | ✓ Active      |
 
 **Attendance:** 4 / 4 (100%)
 
@@ -51,12 +51,12 @@ Build and deploy the **authentication foundation** for Campus Commute Buddy that
 
 ## Team Capacity
 
-| Member | Role | Hours | Main Focus |
-| --- | --- | --- | --- |
-| Ashraf | Product Owner / Developer | 30 | Backend controllers, frontend integration, UI design |
-| Ali | Developer | 30 | Database schema, admin routes, infrastructure |
-| Shaun | Developer | 30 | Backend controllers , JWT middleware, testing, documentation |
-| Sathmi | Developer | 30 | React UI (TailwindCSS), form validation, UX |
+| Member | Role                      | Hours | Main Focus                                                   |
+| ------ | ------------------------- | ----- | ------------------------------------------------------------ |
+| Ashraf | Product Owner / Developer | 30    | Backend controllers, frontend integration, UI design         |
+| Ali    | Developer                 | 30    | Database schema, admin routes, infrastructure                |
+| Shaun  | Developer                 | 30    | Backend controllers , JWT middleware, testing, documentation |
+| Sathmi | Developer                 | 30    | React UI (TailwindCSS), form validation, UX                  |
 
 **Total Capacity:** 120 hours **Utilization:** ~80 % (buffer for midterms)
 
@@ -64,12 +64,12 @@ Build and deploy the **authentication foundation** for Campus Commute Buddy that
 
 ## User Stories Selected for Sprint 1
 
-| Story Title | Priority | Points | Assignees |
-| --- | --- | --- | --- |
-| University Email Registration | P0 | 8 | Ashraf, Ali, Sathmi |
-| Secure User Login | P0 | 5 | Ashraf, Shaun, Sathmi |
-| Protected Route Access | P0 | 5 | Shaun, Ali |
-| Admin Role Management | P1 | 2 | Ali, Shaun |
+| Story Title                   | Priority | Points | Assignees             |
+| ----------------------------- | -------- | ------ | --------------------- |
+| University Email Registration | P0       | 8      | Ashraf, Ali, Sathmi   |
+| Secure User Login             | P0       | 5      | Ashraf, Shaun, Sathmi |
+| Protected Route Access        | P0       | 5      | Shaun, Ali            |
+| Admin Role Management         | P1       | 2      | Ali, Shaun            |
 
 **Total Story Points:** 20 **Aligned with:** RPM (Oct 16 2025)
 
@@ -151,14 +151,13 @@ Build and deploy the **authentication foundation** for Campus Commute Buddy that
 
 ## Technical Spikes
 
-| Spike | Focus | Owner | Duration | Outcome |
-| --- | --- | --- | --- | --- |
-| JWT Authentication Best Practices | jsonwebtoken usage and security | Shaun | 3 h | Use jsonwebtoken + 1 h expiry |
-| MongoDB Schema Design | User model and uniqueness rules | Ali | 2 h | User model with unique email + timestamps |
-| React + Tailwind Setup | Component layout and styling | Sathmi | 2 h | Responsive base UI implemented |
+| Spike                             | Focus                           | Owner  | Duration | Outcome                                   |
+| --------------------------------- | ------------------------------- | ------ | -------- | ----------------------------------------- |
+| JWT Authentication Best Practices | jsonwebtoken usage and security | Shaun  | 3 h      | Use jsonwebtoken + 1 h expiry             |
+| MongoDB Schema Design             | User model and uniqueness rules | Ali    | 2 h      | User model with unique email + timestamps |
+| React + Tailwind Setup            | Component layout and styling    | Sathmi | 2 h      | Responsive base UI implemented            |
 
 ---
-
 
 ## Definition of Done
 
@@ -184,9 +183,9 @@ A story is done when:
 
 ## Sprint Schedule
 
-| Week | Focus | Deliverables |
-| --- | --- | --- |
-| Oct 19 – 25 | Setup + Backend | MongoDB connected, register/login APIs working |
+| Week           | Focus                  | Deliverables                                      |
+| -------------- | ---------------------- | ------------------------------------------------- |
+| Oct 19 – 25    | Setup + Backend        | MongoDB connected, register/login APIs working    |
 | Oct 26 – Nov 3 | Frontend + Integration | Auth flow completed + admin endpoint + demo ready |
 
 ---
@@ -209,10 +208,10 @@ All Sprint 1 work is tracked on our Trello board:
 
 The Sprint 1 Backlog includes broader feature cards that correspond to our selected stories:
 
-| Feature Area | Trello Card Name | Related Sprint 1 Stories |
-| --- | --- | --- |
+| Feature Area                | Trello Card Name              | Related Sprint 1 Stories                                                 |
+| --------------------------- | ----------------------------- | ------------------------------------------------------------------------ |
 | Authentication & Onboarding | “Authentication & Onboarding” | University Email Registration, Secure User Login, Protected Route Access |
-| Admin Dashboard | “Admin Dashboard” | Admin Role Management |
+| Admin Dashboard             | “Admin Dashboard”             | Admin Role Management                                                    |
 
 Each Trello card lists assigned members, priority/difficulty labels, and checklists for subtasks.
 
@@ -222,12 +221,12 @@ Cards move across workflow columns as work progresses, providing real-time track
 
 ## Approval & Sign-Off
 
-| Name | Role | Signature | Date |
-| --- | --- | --- | --- |
+| Name   | Role                        | Signature               | Date        |
+| ------ | --------------------------- | ----------------------- | ----------- |
 | Ashraf | Product Owner / Facilitator | Mohammed Ashraful Islam | Oct 19 2025 |
-| Ali | Developer | Ali Nategh | Oct 19 2025 |
-| Shaun | Developer | Shaun Fernando | Oct 19 2025 |
-| Sathmi | Developer | Sathmi Kurukulasooriya | Oct 19 2025 |
+| Ali    | Developer                   | Ali Nategh              | Oct 19 2025 |
+| Shaun  | Developer                   | Shaun Fernando          | Oct 19 2025 |
+| Sathmi | Developer                   | Sathmi Kurukulasooriya  | Oct 19 2025 |
 
 ---
 
@@ -241,4 +240,4 @@ Cards move across workflow columns as work progresses, providing real-time track
 
 ---
 
-*This document serves as the official record of the Sprint 1 Planning Meeting and defines the scope, responsibilities, and workflow for Sprint 1 of the Campus Commute Buddy project.*
+_This document serves as the official record of the Sprint 1 Planning Meeting and defines the scope, responsibilities, and workflow for Sprint 1 of the Campus Commute Buddy project._
