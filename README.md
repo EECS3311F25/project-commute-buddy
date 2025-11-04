@@ -53,7 +53,7 @@ cd project-commute-buddy/
 cd setup/backend/
 npm install
 
-# Create your own .env file using the .env.example file given. PLEASE SET YOUR OWN VALUES FOR THE JWT_SECRET key for security. 
+# Create your own .env file using the .env.example file given. PLEASE SET YOUR OWN VALUES FOR THE JWT_SECRET key for security.
 # File must be placed in backend/:
 cat .env.example > .env
 
@@ -73,3 +73,5 @@ npm start
 > Sometimes the build from frontend opens the browser before it gets compiled. To fix this, either wait till it's compiled and reload the webpage, or type: `BROWSER=none npm start` and once it's compiled, click on the link shown on the console.
 
 > Currently the `/api/users` route used may be blocked by some web browsers and may result in an error in creating a user successfully. To resolve this, either disable your browsers ad blocker or open this in incognito mode.
+
+> Please make sure you have mongoDB installed in your system for the app to connect. Installation instructions for MongoDB can be found here: https://www.mongodb.com/try/download/community
