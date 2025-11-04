@@ -274,12 +274,12 @@ _Date:_ October 16, 2025
 
 _Participant Signatures/Acknowledgment:_
 
-| Participant | Signature/Acknowledgment   | Date         |
-| ----------- | -------------------------- | ------------ |
-| Ashraf      | **\*\*\*\***\_**\*\*\*\*** | Oct 16, 2025 |
-| Shaun       | **\*\*\*\***\_**\*\*\*\*** | Oct 16, 2025 |
-| Ali         | **\*\*\*\***\_**\*\*\*\*** | Oct 16, 2025 |
-| Sathmi      | **\*\*\*\***\_**\*\*\*\*** | Oct 16, 2025 |
+| Participant | Signature/Acknowledgment | Date         |
+| ----------- | ------------------------ | ------------ |
+| Ashraf      | Mohammed Ashraful Islam  | Oct 16, 2025 |
+| Shaun       | Shaun Fernando           | Oct 16, 2025 |
+| Ali         | Ali Nategh               | Oct 16, 2025 |
+| Sathmi      | Sathmi Kurukulasooriya   | Oct 16, 2025 |
 
 ---
 
