@@ -15,7 +15,7 @@ export default function ProfilePage() {
     const token = localStorage.getItem("token");
     const fetchRoutes = async () => {
       try {
-        const res = await axios.get("/api/routes", {
+        const res = await axios.get("http://localhost:5000/api/routes", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRoutes(res.data);
@@ -32,7 +32,7 @@ export default function ProfilePage() {
     const token = localStorage.getItem("token");
     const fetchUserPreferences = async () => {
       try {
-        const res = await axios.get("/api/users/preferences", {
+        const res = await axios.get("http://localhost:5000/api/users/preferences", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSelectedRoutes(res.data); // res.data is preferredRoutes array
@@ -55,7 +55,7 @@ export default function ProfilePage() {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        "/api/users/preferences",
+        "http://localhost:5000/api/users/preferences",
         { routes: selectedRoutes },
         { headers: { Authorization: `Bearer ${token}` } }
       );

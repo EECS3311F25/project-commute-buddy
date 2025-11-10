@@ -6,6 +6,7 @@ import {
   loginUser,
   getContent,
   getAllUsers,
+  getAllRoutes,
   getUserRoutes,
   updateUserRoutes,
 } from "../controllers/userController.js";
@@ -14,7 +15,8 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/content", protect, getContent);
 router.get("/all", verifyToken, isAdmin, getAllUsers);
-router.get("/routes", verifyToken, getUserRoutes); //this will GET all the user routes they have subscribed to.
+router.get("/routes", verifyToken, getAllRoutes); //get all available routes
+router.get("/preferences", verifyToken, getUserRoutes); //this will GET all the user routes they have subscribed to.
 router.put("/preferences", verifyToken, updateUserRoutes); //this will update existing route preferences of the user
 
 export default router;

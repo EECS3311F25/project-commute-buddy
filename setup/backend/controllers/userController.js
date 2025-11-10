@@ -18,6 +18,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      preferredRoutes: [], //TODO: should check this later
     });
 
     // create JWT
@@ -91,7 +92,9 @@ export const getUserRoutes = async (req, res) => {
 
     res.status(200).json(user.preferredRoutes);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching User Preffered Routes" });
+    res
+      .status(500)
+      .json({ message: "Error fetching User Preffered Routes :(" });
   }
 };
 
@@ -112,5 +115,13 @@ export const updateUserRoutes = async (req, res) => {
     res.status(200).json({ preferredRoutes: updatedUser.preferredRoutes });
   } catch (error) {
     res.status(500).json({ message: "Error Updating User Preffered Routes" });
+  }
+};
+
+//Get all available routes
+export const getAllRoutes = async (req, res) => {
+  try {
+  } catch (error) {
+    res.status(500).json({ message: "Error Fetching Transit Routes" });
   }
 };
