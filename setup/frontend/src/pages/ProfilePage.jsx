@@ -67,6 +67,11 @@ export default function ProfilePage() {
     } catch (err) {
       console.error(err);
       setMessage("Error saving preferences.");
+    } finally {
+      //just hiding the text after
+      setTimeout(() => {
+        setMessage("");
+      }, 1000);
     }
   };
 
@@ -96,7 +101,6 @@ export default function ProfilePage() {
       >
         Save Preferences
       </button>
-
       {message && <p className="mt-3 text-sm text-green-600">{message}</p>}
     </div>
   );
