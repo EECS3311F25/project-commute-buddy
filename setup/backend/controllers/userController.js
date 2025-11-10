@@ -134,3 +134,61 @@ export const getAllRoutes = async (req, res) => {
     res.status(500).json({ message: "Error Fetching Transit Routes" });
   }
 };
+
+//send this users details
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.User.id); //add .select("-password"); to give data except password. Security issue?
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user data" });
+  }
+};
+
+//sets this users details for the 1st time // TODO: DO WE NEED THIS? NOT USED ANYWHERE AT THE MOMENT ? BELOW DOES THE SAME... ALMOST
+export const setUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user profile" });
+  }
+};
+
+//UPDATES user's profile
+export const updateUserProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Check if the email is already taken (excluding the current user)
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== req.user.id) {
+        return res.status(409).json({ message: "Email already exists" });
+      }
+      user.email = email;
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      preferredRoutes: updatedUser.preferredRoutes,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user profile" });
+  }
+};
