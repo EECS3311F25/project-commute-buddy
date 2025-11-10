@@ -36,11 +36,11 @@ export const loginUser = async (req, res) => {
     // check if user exists
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" }); //should we differentiate between invalid username and incorrect pass?
-    //would this be a security risk?
+
     // compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid credentials" }); //would this be a security risk? (reffering to the up comment)
 
     // create JWT with role
     const token = jwt.sign(
@@ -57,7 +57,7 @@ export const loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role, //include role now
+        role: user.role, //include role now //should I include the prefferred routes in the response? I don't think so
       },
     });
   } catch (err) {
@@ -80,7 +80,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-//sends all preffered user routes
+//sends all preferred user routes
 export const getUserRoutes = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -92,5 +92,25 @@ export const getUserRoutes = async (req, res) => {
     res.status(200).json(user.preferredRoutes);
   } catch (error) {
     res.status(500).json({ message: "Error fetching User Preffered Routes" });
+  }
+};
+
+//updates new preferred user routes
+export const updateUserRoutes = async (req, res) => {
+  try {
+    const { routes } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { preferredRoutes: routes },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ preferredRoutes: updatedUser.preferredRoutes });
+  } catch (error) {
+    res.status(500).json({ message: "Error Updating User Preffered Routes" });
   }
 };
