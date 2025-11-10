@@ -6,11 +6,13 @@ import {
     loginUser,
     getContent,
     getAllUsers,
+    getUserRoutes,
 } from "../controllers/userController.js";
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/content", protect, getContent);
 router.get("/all", verifyToken, isAdmin, getAllUsers);
+router.get("/routes", verifyToken, getUserRoutes); //this will GET all the user routes they have subscribed to.
 
 export default router;
