@@ -118,9 +118,18 @@ export const updateUserRoutes = async (req, res) => {
   }
 };
 
-//Get all available routes
+//Get all available routes || TODO: Must fetch transit info from a seperate database in the future. For now it returns a predefined value.
 export const getAllRoutes = async (req, res) => {
   try {
+    const dummyRoutes = [
+      "Route 101 - Downtown Express",
+      "Route 202 - Airport Shuttle",
+      "Route 303 - Northside Loop",
+      "Route 404 - University Connector",
+      "Route 505 - East-West Line",
+    ];
+
+    res.status(200).json(dummyRoutes);
   } catch (error) {
     res.status(500).json({ message: "Error Fetching Transit Routes" });
   }
