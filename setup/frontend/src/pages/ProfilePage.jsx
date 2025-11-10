@@ -94,6 +94,16 @@ export default function ProfilePage() {
 
   //handle user's profile update
   const handleProfileSave = async () => {
+    // Validate email domain
+    const emailLower = userData.email.toLowerCase();
+    if (
+      !emailLower.endsWith("@yorku.ca") &&
+      !emailLower.endsWith("@my.yorku.ca")
+    ) {
+      setMessage("Email must end with @yorku.ca or @my.yorku.ca");
+      return;
+    }
+
     try {
       const res = await axios.put(
         "http://localhost:5000/api/users/profile",
@@ -177,7 +187,7 @@ export default function ProfilePage() {
       {message && (
         <div
           className={`fixed top-6 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded shadow-md text-sm font-medium ${
-            message.includes("Error") || message.includes("use")
+            message.includes("Error") || message.includes("use") || message.includes("must end with")
               ? "bg-red-600 text-white"
               : "bg-green-600 text-white"
           } transition-opacity duration-500`}
