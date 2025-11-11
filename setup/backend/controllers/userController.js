@@ -18,7 +18,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      preferredRoutes: [], //TODO: should check this later
+      preferredRoutes: [],
     });
 
     // create JWT
@@ -164,7 +164,7 @@ export const setUserProfile = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   try {
     const { name, email } = req.body;
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select("-password");
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -190,5 +190,30 @@ export const updateUserProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Error updating user profile" });
+  }
+};
+
+//Resets Logged in users password // TODO: In the future we need to include a way to allow users who can't log in to change their password via email
+export const changeUserPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    //Verify Current Password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current Password is incorrect" });
+    }
+
+    //Hash newPassword
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error Resetting Password:" }, error);
   }
 };

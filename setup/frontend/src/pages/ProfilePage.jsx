@@ -6,6 +6,9 @@ export default function ProfilePage() {
   const [selectedRoutes, setSelectedRoutes] = useState([]); // user preferences
   const [message, setMessage] = useState("");
   const [userData, setUserData] = useState({ name: "", email: "" }); //get User data
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
 
   const token = localStorage.getItem("token"); // your auth token
 
@@ -124,6 +127,27 @@ export default function ProfilePage() {
     }
   };
 
+  //change users password
+  const handleChangePassword = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        "http://localhost:5000/api/users/changePassword",
+        { currentPassword, newPassword },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setPasswordMessage(res.data.message); // success message
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (err) {
+      setPasswordMessage(
+        err.response?.data?.message || "Error changing password"
+      );
+    } finally {
+      setTimeout(() => setPasswordMessage(""), 1500); // hide after 3s
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-6 space-y-6">
       <h2 className="text-2xl font-semibold mb-4">Profile</h2>
@@ -160,8 +184,52 @@ export default function ProfilePage() {
         </button>
       </div>
 
+      {/* Change Password Section */}
+      <div className="p-4 border rounded bg-white shadow-sm space-y-3">
+        <h3 className="text-lg font-semibold">Change Password</h3>
+
+        <label className="block">
+          <span className="text-gray-700">Current Password</span>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="w-full border rounded p-2 mt-1"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-gray-700">New Password</span>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="w-full border rounded p-2 mt-1"
+          />
+        </label>
+
+        <button
+          onClick={handleChangePassword}
+          className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
+        >
+          Update Password
+        </button>
+
+        {passwordMessage && (
+          <p
+            className={`mt-2 text-sm font-medium ${
+              passwordMessage.toLowerCase().includes("error")
+                ? "text-red-600"
+                : "text-green-600"
+            }`}
+          >
+            {passwordMessage}
+          </p>
+        )}
+      </div>
+
       {/* Preferred Routes Section */}
-      <h2 className="text-xl font-semibold mt-6">Your Bus Routes</h2>
+      <h2 className="text-xl font-semibold mt-6">Select Your Bus Routes</h2>
       <ul className="space-y-2 mb-4">
         {routes.map((route) => (
           <li
@@ -187,7 +255,9 @@ export default function ProfilePage() {
       {message && (
         <div
           className={`fixed top-6 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded shadow-md text-sm font-medium ${
-            message.includes("Error") || message.includes("use") || message.includes("must end with")
+            message.includes("Error") ||
+            message.includes("use") ||
+            message.includes("must end with")
               ? "bg-red-600 text-white"
               : "bg-green-600 text-white"
           } transition-opacity duration-500`}

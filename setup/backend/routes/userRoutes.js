@@ -11,6 +11,7 @@ import {
   updateUserRoutes,
   getUserProfile,
   updateUserProfile,
+  changeUserPassword,
 } from "../controllers/userController.js";
 
 router.post("/register", registerUser);
@@ -22,6 +23,7 @@ router.get("/preferences", verifyToken, getUserRoutes); //this will GET all the 
 router.put("/preferences", verifyToken, updateUserRoutes); //this will update existing route preferences of the user
 router.get("/profile", verifyToken, getUserProfile); //get this users data {email, name, etc}
 router.put("/profile", verifyToken, updateUserProfile); //get this users data {email, name, etc}
+router.put("/changePassword", verifyToken, changeUserPassword); //Let's non-admins change their password while logged in
 
 
 export default router;
