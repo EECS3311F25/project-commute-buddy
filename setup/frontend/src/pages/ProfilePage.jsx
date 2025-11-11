@@ -104,6 +104,8 @@ export default function ProfilePage() {
       !emailLower.endsWith("@my.yorku.ca")
     ) {
       setMessage("Email must end with @yorku.ca or @my.yorku.ca");
+      // Hide message after 1.5 seconds
+      setTimeout(() => setMessage(""), 1500);
       return;
     }
 
@@ -122,7 +124,7 @@ export default function ProfilePage() {
         setMessage("Error updating preferences.");
       }
     } finally {
-      // Hide message after 3 seconds
+      // Hide message after 1.5 seconds
       setTimeout(() => setMessage(""), 1500);
     }
   };
@@ -144,16 +146,17 @@ export default function ProfilePage() {
         err.response?.data?.message || "Error changing password"
       );
     } finally {
-      setTimeout(() => setPasswordMessage(""), 1500); // hide after 3s
+      setTimeout(() => setPasswordMessage(""), 1500); // hide after 1.5s
     }
   };
 
   return (
     <div className="max-w-lg mx-auto p-6 space-y-6">
-      <h2 className="text-2xl font-semibold mb-4">Profile</h2>
+      <h2 className="text-2xl font-semibold mb-4">Profile Settings</h2>
 
       {/* User Info Form */}
       <div className="p-4 border rounded bg-white shadow-sm space-y-3">
+        <h3 className="text-lg font-semibold">Personal Details</h3>
         <label className="block">
           <span className="text-gray-700">Name</span>
           <input
@@ -180,7 +183,7 @@ export default function ProfilePage() {
           onClick={handleProfileSave}
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
         >
-          Save Profile
+          Update Personal Details
         </button>
       </div>
 
@@ -229,42 +232,44 @@ export default function ProfilePage() {
       </div>
 
       {/* Preferred Routes Section */}
-      <h2 className="text-xl font-semibold mt-6">Select Your Bus Routes</h2>
-      <ul className="space-y-2 mb-4">
-        {routes.map((route) => (
-          <li
-            key={route}
-            className={`p-3 rounded border cursor-pointer ${
-              selectedRoutes.includes(route)
-                ? "bg-blue-100 border-blue-500"
-                : "bg-white border-gray-300"
-            }`}
-            onClick={() => handleSelect(route)}
-          >
-            {route}
-          </li>
-        ))}
-      </ul>
+      <div className="p-4 border rounded bg-white shadow-sm space-y-3">
+        <h2 className="text-xl font-semibold mt-6">Select Your Bus Routes</h2>
+        <ul className="space-y-2 mb-4">
+          {routes.map((route) => (
+            <li
+              key={route}
+              className={`p-3 rounded border cursor-pointer ${
+                selectedRoutes.includes(route)
+                  ? "bg-blue-100 border-blue-500"
+                  : "bg-white border-gray-300"
+              }`}
+              onClick={() => handleSelect(route)}
+            >
+              {route}
+            </li>
+          ))}
+        </ul>
 
-      <button
-        onClick={handleSaveRoutes}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Save Preferences
-      </button>
-      {message && (
-        <div
-          className={`fixed top-6 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded shadow-md text-sm font-medium ${
-            message.includes("Error") ||
-            message.includes("use") ||
-            message.includes("must end with")
-              ? "bg-red-600 text-white"
-              : "bg-green-600 text-white"
-          } transition-opacity duration-500`}
+        <button
+          onClick={handleSaveRoutes}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          {message}
-        </div>
-      )}
+          Save Preferences
+        </button>
+        {message && (
+          <div
+            className={`fixed top-6 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded shadow-md text-sm font-medium ${
+              message.includes("Error") ||
+              message.includes("use") ||
+              message.includes("must end with")
+                ? "bg-red-600 text-white"
+                : "bg-green-600 text-white"
+            } transition-opacity duration-500`}
+          >
+            {message}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
