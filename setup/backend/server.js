@@ -10,6 +10,7 @@ import { connect } from "mongoose";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
+import commuteRoutes from "./routes/commuteRoutes.js";
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ connect(process.env.MONGO_URI)
 
 app.use("/api/users", userRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/commute", commuteRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
