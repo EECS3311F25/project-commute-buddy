@@ -4,6 +4,7 @@ export default function AdminNav({ activeTab, setActiveTab }) {
     { id: "users", label: "Users" },
     { id: "reports", label: "Reports" },
     { id: "activity", label: "Activity Log" },
+    { id: "profile", label: "Preferences" },
   ];
 
   return (

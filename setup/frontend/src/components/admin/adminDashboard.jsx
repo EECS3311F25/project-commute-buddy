@@ -5,6 +5,7 @@ import UserTable from "./UserTable";
 import { useNavigate } from "react-router-dom";
 import ReportsTable from "./ReportsTable";
 import ActivityLog from "./ActivityLog";
+import ProfilePage from "../../pages/ProfilePage";
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("users");
@@ -18,6 +19,8 @@ function AdminDashboard() {
         return <ReportsTable />;
       case "activity":
         return <ActivityLog />;
+      case "profile":
+        return <ProfilePage />;
       default:
         return <p>Select a tab</p>;
     }

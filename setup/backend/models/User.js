@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" }, //users have a user role by default
+  preferredRoutes: [String], //every user has their own preferred route
 
 },
   {timestamps: true}

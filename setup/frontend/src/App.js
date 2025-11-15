@@ -8,6 +8,7 @@ import Navbar from "./components/common/Navbar.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
 import Forbidden from "./pages/Forbidden.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 function App() {
 
@@ -25,6 +26,12 @@ function App() {
         <Route path="/content" element={
           <ProtectedRoute>
             <Content/>
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }/>
 
