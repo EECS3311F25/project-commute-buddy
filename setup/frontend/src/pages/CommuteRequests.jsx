@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 function CommuteRequests() {
   const [requests, setRequests] = useState([])
@@ -7,32 +8,50 @@ function CommuteRequests() {
   const [message, setMessage] = useState("")
   const [activeTab, setActiveTab] = useState("received") // received | sent
   const [refresh, setRefresh] = useState(false)
+  const [error, setError] = useState("")
+  const navigate = useNavigate()
 
   const token = localStorage.getItem("token")
 
   // Fetch commute requests
   useEffect(() => {
+    if (!token) {
+      navigate("/login")
+      return
+    }
+
     const fetchRequests = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/commute/my-requests", {
+        setError("")
+        const res = await fetch("http://localhost:5001/api/commute/my-requests", {
           headers: { Authorization: `Bearer ${token}` },
         })
+        
+        if (!res.ok) {
+          if (res.status === 401) {
+            navigate("/login")
+            return
+          }
+          throw new Error("Failed to fetch requests")
+        }
+        
         const data = await res.json()
         setRequests(data || [])
       } catch (err) {
         console.error("Failed to fetch commute requests:", err)
+        setError("Failed to load requests. Please try again.")
       } finally {
         setLoading(false)
       }
     }
 
-    if (token) fetchRequests()
-  }, [token, refresh])
+    fetchRequests()
+  }, [token, refresh, navigate])
 
   // Handle Accept / Decline
   const handleResponse = async (id, action) => {
     try {
-      const res = await fetch("http://localhost:5000/api/commute/respond", {
+      const res = await fetch("http://localhost:5001/api/commute/respond", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +75,7 @@ function CommuteRequests() {
   const handleSendRequest = async () => {
     if (!receiver.trim()) return alert("Receiver is required")
     try {
-      const res = await fetch("http://localhost:5000/api/commute/send", {
+      const res = await fetch("http://localhost:5001/api/commute/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +97,13 @@ function CommuteRequests() {
     }
   }
 
-  if (loading) return <p>Loading requests...</p>
+  if (loading) {
+    return (
+      <div style={{ padding: 20, maxWidth: 600, margin: "auto", textAlign: "center" }}>
+        <p>Loading requests...</p>
+      </div>
+    )
+  }
 
   const filteredRequests = requests.filter((r) =>
     activeTab === "received" ? r.type === "received" : r.type === "sent"
@@ -87,6 +112,19 @@ function CommuteRequests() {
   return (
     <div style={{ padding: 20, maxWidth: 600, margin: "auto" }}>
       <h2>Commute Requests</h2>
+      
+      {error && (
+        <div style={{ 
+          padding: 12, 
+          marginBottom: 20, 
+          background: "#fee", 
+          border: "1px solid #fcc", 
+          borderRadius: 8,
+          color: "#c00"
+        }}>
+          {error}
+        </div>
+      )}
 
       {/* Tabs */}
       <div style={{ display: "flex", marginBottom: 20 }}>

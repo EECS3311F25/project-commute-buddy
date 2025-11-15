@@ -6,12 +6,21 @@ export default function ProfilePage() {
   const [routes, setRoutes] = useState([]); // all available routes
   const [selectedRoutes, setSelectedRoutes] = useState([]); // user preferences
   const [message, setMessage] = useState("");
-  const [userData, setUserData] = useState({ name: "", email: "" }); //get User data
+  const [userData, setUserData] = useState({ 
+    name: "", 
+    email: "",
+    startArea: "",
+    transportMode: "",
+    profileImage: "",
+    gender: "",
+    interests: []
+  }); //get User data
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const [interestInput, setInterestInput] = useState(""); // for adding interests
 
   const token = localStorage.getItem("token"); // your auth token
 
@@ -23,10 +32,19 @@ export default function ProfilePage() {
 
     const fetchUser = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/profile", {
+        const res = await axios.get("http://localhost:5001/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUserData(res.data); // e.g. { name, email, preferredRoutes }
+        // Ensure all new fields are initialized with default values if not present
+        setUserData({
+          name: res.data.name || "",
+          email: res.data.email || "",
+          startArea: res.data.startArea || "",
+          transportMode: res.data.transportMode || "",
+          profileImage: res.data.profileImage || "",
+          gender: res.data.gender || "",
+          interests: res.data.interests || []
+        }); // e.g. { name, email, preferredRoutes, startArea, transportMode, etc. }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -40,7 +58,7 @@ export default function ProfilePage() {
     const token = localStorage.getItem("token");
     const fetchRoutes = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/routes", {
+        const res = await axios.get("http://localhost:5001/api/users/routes", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRoutes(res.data);
@@ -58,7 +76,7 @@ export default function ProfilePage() {
     const fetchUserPreferences = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/users/preferences",
+          "http://localhost:5001/api/users/preferences",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -83,7 +101,7 @@ export default function ProfilePage() {
   const handleSaveRoutes = async () => {
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/users/preferences",
+        "http://localhost:5001/api/users/preferences",
         { routes: selectedRoutes },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -114,7 +132,7 @@ export default function ProfilePage() {
 
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/users/profile",
+        "http://localhost:5001/api/users/profile",
         userData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -137,7 +155,7 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        "http://localhost:5000/api/users/changePassword",
+        "http://localhost:5001/api/users/changePassword",
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -180,6 +198,157 @@ export default function ProfilePage() {
             }
             className="w-full border rounded p-2 mt-1"
           />
+        </label>
+
+        {/* Start Area */}
+        <label className="block">
+          <span className="text-gray-700">Start Area</span>
+          <select
+            value={userData.startArea || ""}
+            onChange={(e) =>
+              setUserData({ ...userData, startArea: e.target.value })
+            }
+            className="w-full border rounded p-2 mt-1"
+          >
+            <option value="">Select an area</option>
+            <option value="Richmond Hill">Richmond Hill</option>
+            <option value="Markham">Markham</option>
+            <option value="North York">North York</option>
+            <option value="Scarborough">Scarborough</option>
+            <option value="Vaughan">Vaughan</option>
+            <option value="Toronto">Toronto</option>
+            <option value="Mississauga">Mississauga</option>
+            <option value="Brampton">Brampton</option>
+            <option value="Aurora">Aurora</option>
+            <option value="Newmarket">Newmarket</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        {/* Transport Mode */}
+        <label className="block">
+          <span className="text-gray-700">Primary Transport Mode</span>
+          <select
+            value={userData.transportMode || ""}
+            onChange={(e) =>
+              setUserData({ ...userData, transportMode: e.target.value })
+            }
+            className="w-full border rounded p-2 mt-1"
+          >
+            <option value="">Select transport mode</option>
+            <option value="TTC">TTC</option>
+            <option value="YRT">YRT</option>
+            <option value="GO Train">GO Train</option>
+            <option value="GO Bus">GO Bus</option>
+            <option value="Mixed">Mixed</option>
+          </select>
+        </label>
+
+        {/* Profile Image URL */}
+        <label className="block">
+          <span className="text-gray-700">Profile Image URL</span>
+          <input
+            type="url"
+            placeholder="https://example.com/image.jpg"
+            value={userData.profileImage || ""}
+            onChange={(e) =>
+              setUserData({ ...userData, profileImage: e.target.value })
+            }
+            className="w-full border rounded p-2 mt-1"
+          />
+          {userData.profileImage && (
+            <img 
+              src={userData.profileImage} 
+              alt="Profile preview" 
+              className="mt-2 w-20 h-20 rounded-full object-cover border"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          )}
+        </label>
+
+        {/* Gender (Optional) */}
+        <label className="block">
+          <span className="text-gray-700">Gender (Optional)</span>
+          <select
+            value={userData.gender || ""}
+            onChange={(e) =>
+              setUserData({ ...userData, gender: e.target.value })
+            }
+            className="w-full border rounded p-2 mt-1"
+          >
+            <option value="">Prefer not to say</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Non-binary">Non-binary</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </label>
+
+        {/* Interests */}
+        <label className="block">
+          <span className="text-gray-700">Interests (Optional)</span>
+          <div className="flex gap-2 mt-1">
+            <input
+              type="text"
+              placeholder="Add an interest (e.g., Sports, Music)"
+              value={interestInput}
+              onChange={(e) => setInterestInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (interestInput.trim() && !userData.interests.includes(interestInput.trim())) {
+                    setUserData({
+                      ...userData,
+                      interests: [...userData.interests, interestInput.trim()]
+                    });
+                    setInterestInput("");
+                  }
+                }
+              }}
+              className="flex-1 border rounded p-2"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (interestInput.trim() && !userData.interests.includes(interestInput.trim())) {
+                  setUserData({
+                    ...userData,
+                    interests: [...userData.interests, interestInput.trim()]
+                  });
+                  setInterestInput("");
+                }
+              }}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Add
+            </button>
+          </div>
+          {userData.interests.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {userData.interests.map((interest, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center gap-2"
+                >
+                  {interest}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserData({
+                        ...userData,
+                        interests: userData.interests.filter((_, i) => i !== index)
+                      });
+                    }}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
         </label>
 
         <button

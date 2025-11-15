@@ -2,7 +2,16 @@ import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children, requiredRole }) {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const userStr = localStorage.getItem("user");
+  
+  // Parse user safely, handle null case
+  let user = null;
+  try {
+    user = userStr ? JSON.parse(userStr) : null;
+  } catch (e) {
+    console.error("Error parsing user from localStorage:", e);
+    user = null;
+  }
 
   // If no token, redirect to login
   if (!token) {

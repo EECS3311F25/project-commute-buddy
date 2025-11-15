@@ -2,13 +2,23 @@ import { useNavigate } from "react-router-dom";
 
 function Home() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const isLoggedIn = Boolean(token);
 
-  const goToSignup = () => {
-    navigate("/signup");
+  const goPrimary = () => {
+    if (isLoggedIn) {
+      navigate("/matches");
+    } else {
+      navigate("/signup");
+    }
   };
 
-  const gotoLogin = () => {
-    navigate("/login");
+  const goSecondary = () => {
+    if (isLoggedIn) {
+      navigate("/profile");
+    } else {
+      navigate("/login");
+    }
   };
 
   const heroTopUrl =
@@ -47,22 +57,25 @@ function Home() {
             <div className="flex justify-center">
               <div className="flex flex-1 gap-3 max-w-[480px] flex-col items-stretch px-4 py-3">
                 <button
-                  onClick={goToSignup}
+                  onClick={goPrimary}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#ce1c2b] text-[#fbf8f9] text-sm font-bold leading-normal tracking-[0.015em] w-full"
                 >
-                  <span className="truncate">Sign In with York Email</span>
+                  <span className="truncate">
+                    {isLoggedIn ? "Find Commute Matches" : "Sign In with York Email"}
+                  </span>
                 </button>
 
                 <button
-                  onClick={gotoLogin}
+                  onClick={goSecondary}
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f3e8e9] text-[#1b0e0f] text-sm font-bold leading-normal tracking-[0.015em] w-full"
                 >
-                  <span className="truncate">Continue to Login</span>
+                  <span className="truncate">
+                    {isLoggedIn ? "Update My Profile" : "Continue to Login"}
+                  </span>
                 </button>
 
-                {/* Keep "Learn More" as plain text to match your current behavior */}
                 <p className="text-center text-[#1b0e0f] text-sm font-bold leading-normal tracking-[0.015em] px-4">
-                  Learn More
+                  {isLoggedIn ? "Manage your commute preferences anytime." : "Learn More"}
                 </p>
               </div>
             </div>

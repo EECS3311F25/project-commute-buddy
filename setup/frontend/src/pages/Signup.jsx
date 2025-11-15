@@ -50,12 +50,13 @@ function Signup() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/register",
+        "http://localhost:5001/api/users/register",
         form
       );
-      alert("✅ Signup successful!");
-      console.log("Token:", res.data.token);
+      alert("✅ Signup successful! Please login.");
       setForm({ name: "", email: "", password: "", confirmPassword: "" });
+      // Redirect to login page
+      navigate("/login");
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
