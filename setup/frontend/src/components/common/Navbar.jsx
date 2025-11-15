@@ -46,6 +46,9 @@ function Navbar() {
             <Link to="/content" style={styles.link}>
               Content
             </Link>
+            <Link to="/profile" style={styles.link}>
+              Profile
+            </Link>
             <button onClick={handleLogout} style={styles.logoutBtn}>
               Logout
             </button>
