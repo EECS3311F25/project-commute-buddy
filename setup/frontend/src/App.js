@@ -8,6 +8,7 @@ import Navbar from "./components/common/Navbar.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
 import Forbidden from "./pages/Forbidden.jsx";
+import CommuteRequests from "./pages/CommuteRequests.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/403" element={<Forbidden />} />
+        <Route path="/requests" element={<CommuteRequests />} />
+
 
         {/* Protected Pages */}
         <Route path="/content" element={
