@@ -21,7 +21,7 @@ function Navbar() {
   const primaryLinks = [
     { label: "Home", to: "/home" },
     { label: "Matches", to: "/matches" },
-    { label: "Groups", to: "/requests" },
+    { label: "Connections", to: "/requests" },
     { label: "Profile", to: "/profile" },
   ];
 
