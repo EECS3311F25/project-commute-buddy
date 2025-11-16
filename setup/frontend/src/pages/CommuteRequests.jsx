@@ -49,7 +49,7 @@ function CommuteRequests() {
 
   const handleResponse = async (id, action) => {
     try {
-      const res = await fetch("http://localhost:5000/api/commute/respond", {
+      const res = await fetch("http://localhost:5001/api/commute/respond", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +73,7 @@ function CommuteRequests() {
     if (!receiver.trim()) return alert("Receiver is required");
 
     try {
-      const res = await fetch("http://localhost:5000/api/commute/send", {
+      const res = await fetch("http://localhost:5001/api/commute/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
