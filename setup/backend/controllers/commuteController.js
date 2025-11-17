@@ -98,7 +98,14 @@ export const getUserRequests = async (req, res) => {
  */
 export const findMatches = async (req, res) => {
   const userId = req.user.id;
-  const { limit = 20, minPercentage = 0, transportMode, startArea } = req.query;
+  const {
+    limit = 20,
+    minPercentage = 0,
+    transportMode,
+    startArea,
+    route,
+    commuteWindow,
+  } = req.query;
 
   try {
     // Get current user with their preferred routes
@@ -141,8 +148,13 @@ export const findMatches = async (req, res) => {
     // Build query for users with overlapping routes
     const matchQuery = {
       _id: { $nin: Array.from(excludedUserIds).map(id => new mongoose.Types.ObjectId(id)) },
-      preferredRoutes: { $in: currentUser.preferredRoutes }, // Users with at least one shared route
     };
+
+    if (route) {
+      matchQuery.preferredRoutes = route;
+    } else {
+      matchQuery.preferredRoutes = { $in: currentUser.preferredRoutes };
+    }
 
     // Apply optional filters
     if (transportMode) {
@@ -150,6 +162,9 @@ export const findMatches = async (req, res) => {
     }
     if (startArea) {
       matchQuery.startArea = startArea;
+    }
+    if (commuteWindow) {
+      matchQuery.commuteWindow = commuteWindow;
     }
 
     // Find potential matches

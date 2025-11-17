@@ -170,7 +170,8 @@ export const updateUserProfile = async (req, res) => {
       transportMode, 
       profileImage, 
       gender, 
-      interests 
+      interests,
+      commuteWindow,
     } = req.body;
     const user = await User.findById(req.user.id).select("-password");
 
@@ -195,6 +196,7 @@ export const updateUserProfile = async (req, res) => {
     if (profileImage !== undefined) user.profileImage = profileImage;
     if (gender !== undefined) user.gender = gender;
     if (interests !== undefined) user.interests = Array.isArray(interests) ? interests : [];
+    if (commuteWindow !== undefined) user.commuteWindow = commuteWindow;
 
     const updatedUser = await user.save();
 
@@ -208,6 +210,7 @@ export const updateUserProfile = async (req, res) => {
       profileImage: updatedUser.profileImage,
       gender: updatedUser.gender,
       interests: updatedUser.interests,
+      commuteWindow: updatedUser.commuteWindow,
     });
   } catch (error) {
     res.status(500).json({ message: "Error updating user profile" });
