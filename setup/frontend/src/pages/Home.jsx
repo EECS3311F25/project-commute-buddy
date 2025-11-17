@@ -75,7 +75,9 @@ function Home() {
                 </button>
 
                 <p className="text-center text-[#1b0e0f] text-sm font-bold leading-normal tracking-[0.015em] px-4">
-                  {isLoggedIn ? "Manage your commute preferences anytime." : "Learn More"}
+                  {isLoggedIn
+                    ? "Dial in your route, preferred time, and start area to meet commute buddies who match your exact trip."
+                    : "Use your York email to search by route, time, and location."}
                 </p>
               </div>
             </div>
