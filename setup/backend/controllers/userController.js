@@ -22,7 +22,7 @@ export const registerUser = async (req, res) => {
     });
 
     // create JWT
-    const token = generateToken(User._id); //this requires an .env file for you to implement. Example is given in '.env.example' file
+    const token = generateToken(newUser._id); // Fixed: use newUser._id instead of User._id
 
     res.status(201).json({ token });
   } catch (err) {
@@ -58,7 +58,7 @@ export const loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role, //include role now //should I include the prefferred routes in the response? I don't think so
+        role: user.role, //include role now
       },
     });
   } catch (err) {
@@ -138,7 +138,7 @@ export const getAllRoutes = async (req, res) => {
 //send this users details
 export const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.User.id); //add .select("-password"); to give data except password. Security issue?
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -163,7 +163,16 @@ export const setUserProfile = async (req, res) => {
 //UPDATES user's profile
 export const updateUserProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { 
+      name, 
+      email, 
+      startArea, 
+      transportMode, 
+      profileImage, 
+      gender, 
+      interests,
+      commuteWindow,
+    } = req.body;
     const user = await User.findById(req.user.id).select("-password");
 
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -177,8 +186,17 @@ export const updateUserProfile = async (req, res) => {
       user.email = email;
     }
 
-    user.name = name || user.name;
-    user.email = email || user.email;
+    // Update basic fields
+    if (name !== undefined) user.name = name;
+    if (email !== undefined) user.email = email;
+    
+    // Update new matching fields
+    if (startArea !== undefined) user.startArea = startArea;
+    if (transportMode !== undefined) user.transportMode = transportMode;
+    if (profileImage !== undefined) user.profileImage = profileImage;
+    if (gender !== undefined) user.gender = gender;
+    if (interests !== undefined) user.interests = Array.isArray(interests) ? interests : [];
+    if (commuteWindow !== undefined) user.commuteWindow = commuteWindow;
 
     const updatedUser = await user.save();
 
@@ -187,6 +205,12 @@ export const updateUserProfile = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       preferredRoutes: updatedUser.preferredRoutes,
+      startArea: updatedUser.startArea,
+      transportMode: updatedUser.transportMode,
+      profileImage: updatedUser.profileImage,
+      gender: updatedUser.gender,
+      interests: updatedUser.interests,
+      commuteWindow: updatedUser.commuteWindow,
     });
   } catch (error) {
     res.status(500).json({ message: "Error updating user profile" });
