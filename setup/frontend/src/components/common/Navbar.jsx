@@ -1,4 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -6,12 +8,29 @@ function Navbar() {
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
   const role = parsedUser?.role ?? null;
+  const [profileImageLink, setProfileImageLink] = useState([]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
   };
+
+  //get users current profile picture, if it exists
+  const fetchProfileImage = async () => {
+    try {
+      const res = await axios.get("http://localhost:5001/api/users/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setProfileImageLink(res.data.profileImage);
+      
+    } catch (error) {
+      console.error("Error fetching User Profile Image:", error);
+    }
+  };
+
+  fetchProfileImage();
 
   // Admin dashboard handles its own navigation
   if (token && role === "admin") {
@@ -57,7 +76,11 @@ function Navbar() {
               ))}
             </nav>
             <div style={styles.actions}>
-              <button type="button" style={styles.iconButton} aria-label="Notifications">
+              <button
+                type="button"
+                style={styles.iconButton}
+                aria-label="Notifications"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -72,7 +95,9 @@ function Navbar() {
                 type="button"
                 style={{
                   ...styles.avatar,
-                  backgroundImage: `url("${parsedUser?.profileImage || defaultAvatar}")`,
+                  backgroundImage: `url("${
+                    profileImageLink || defaultAvatar
+                  }")`,
                 }}
                 onClick={() => navigate("/profile")}
                 aria-label="Profile"
@@ -84,7 +109,10 @@ function Navbar() {
           </div>
         ) : (
           <div style={styles.guestActions}>
-            <Link to="/login" style={{ ...styles.navLink, ...styles.guestLink }}>
+            <Link
+              to="/login"
+              style={{ ...styles.navLink, ...styles.guestLink }}
+            >
               Login
             </Link>
             <Link to="/signup" style={styles.primaryBtn}>
