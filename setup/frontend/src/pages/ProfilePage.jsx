@@ -13,7 +13,8 @@ export default function ProfilePage() {
     transportMode: "",
     profileImage: "",
     gender: "",
-    interests: []
+    interests: [],
+    commuteWindow: "",
   }); //get User data
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -43,7 +44,8 @@ export default function ProfilePage() {
           transportMode: res.data.transportMode || "",
           profileImage: res.data.profileImage || "",
           gender: res.data.gender || "",
-          interests: res.data.interests || []
+          interests: res.data.interests || [],
+          commuteWindow: res.data.commuteWindow || "",
         }); // e.g. { name, email, preferredRoutes, startArea, transportMode, etc. }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -283,6 +285,25 @@ export default function ProfilePage() {
             <option value="Female">Female</option>
             <option value="Non-binary">Non-binary</option>
             <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </label>
+
+        <label className="block">
+          <span className="text-gray-700">Typical Commute Time</span>
+          <select
+            value={userData.commuteWindow || ""}
+            onChange={(e) =>
+              setUserData({ ...userData, commuteWindow: e.target.value })
+            }
+            className="w-full border rounded p-2 mt-1"
+          >
+            <option value="">Select a time window</option>
+            <option value="Early Morning (5-7 AM)">Early Morning (5-7 AM)</option>
+            <option value="Morning (7-9 AM)">Morning (7-9 AM)</option>
+            <option value="Midday (9 AM-1 PM)">Midday (9 AM-1 PM)</option>
+            <option value="Afternoon (1-4 PM)">Afternoon (1-4 PM)</option>
+            <option value="Evening (4-7 PM)">Evening (4-7 PM)</option>
+            <option value="Late Evening (7-10 PM)">Late Evening (7-10 PM)</option>
           </select>
         </label>
 
