@@ -13,7 +13,7 @@ function UserTable() {
 
         const res = await axios.get("http://localhost:5001/api/users/all", {
           //I think it's best to create a .env file here so if url chages
-          headers: { Authorization: `Bearer ${token}` }, //it's less hassle
+          headers: { Authorization: `Bearer ${token}` }, //it's less hassle //yes, I (Shaun) think so too. Let's change it in the coming sprint
         });
 
         setUsers(res.data);
