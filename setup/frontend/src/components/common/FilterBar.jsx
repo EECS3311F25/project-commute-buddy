@@ -1,68 +1,142 @@
-// src/components/common/FilterBar.jsx
+const commuteWindows = [
+  "Early Morning (5-7 AM)",
+  "Morning (7-9 AM)",
+  "Midday (9 AM-1 PM)",
+  "Afternoon (1-4 PM)",
+  "Evening (4-7 PM)",
+  "Late Evening (7-10 PM)",
+];
 
-function FilterBar({ onFilterChange }) {
-  const handleFilterClick = (filterType) => {
-    
-    // For now, just UI placeholder (styled buttons matching design)
-    // Later, we can implement actual filtering logic
-    console.log(`Filter clicked: ${filterType}`);
-    if (onFilterChange) {
-      onFilterChange(filterType);
+function FilterBar({
+  filters,
+  onFiltersChange,
+  onApply,
+  onReset,
+  routes = [],
+  startAreas = [],
+}) {
+  const handleChange = (field, value) => {
+    if (onFiltersChange) {
+      onFiltersChange({ ...filters, [field]: value });
     }
   };
 
   return (
-    <div className="flex gap-3 p-3 flex-wrap pr-4">
-      <button
-        onClick={() => handleFilterClick("gender")}
-        className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f2e8e9] pl-4 pr-2 hover:bg-[#e6d1d2] transition-colors"
-      >
-        <p className="text-[#1a0e0f] text-sm font-medium leading-normal">Gender</p>
-        <div className="text-[#1a0e0f]" data-icon="CaretDown" data-size="20px" data-weight="regular">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
-          </svg>
+    <div className="px-4 py-3">
+      <div className="rounded-2xl border border-[#f2e8e9] bg-white/80 backdrop-blur p-4 shadow-sm space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#9a5a60] font-semibold">
+              Filters
+            </p>
+            <p className="text-[#1a0e0f] text-lg font-semibold">
+              Narrow down your commute buddies
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onReset}
+            className="text-sm font-medium text-[#ce1c2b] hover:text-[#a41421]"
+          >
+            Reset
+          </button>
         </div>
-      </button>
 
-      <button
-        onClick={() => handleFilterClick("schedule")}
-        className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f2e8e9] pl-4 pr-2 hover:bg-[#e6d1d2] transition-colors"
-      >
-        <p className="text-[#1a0e0f] text-sm font-medium leading-normal">Schedule</p>
-        <div className="text-[#1a0e0f]" data-icon="CaretDown" data-size="20px" data-weight="regular">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
-          </svg>
-        </div>
-      </button>
+        <div className="grid gap-4 md:grid-cols-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Route
+            </label>
+            <select
+              value={filters.route}
+              onChange={(e) => handleChange("route", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+            >
+              <option value="">Any route</option>
+              {routes.map((route) => (
+                <option key={route} value={route}>
+                  {route}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <button
-        onClick={() => handleFilterClick("interests")}
-        className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f2e8e9] pl-4 pr-2 hover:bg-[#e6d1d2] transition-colors"
-      >
-        <p className="text-[#1a0e0f] text-sm font-medium leading-normal">Interests</p>
-        <div className="text-[#1a0e0f]" data-icon="CaretDown" data-size="20px" data-weight="regular">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
-          </svg>
-        </div>
-      </button>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Start Area
+            </label>
+            <select
+              value={filters.startArea}
+              onChange={(e) => handleChange("startArea", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+            >
+              <option value="">Anywhere</option>
+              {startAreas.map((area) => (
+                <option key={area} value={area}>
+                  {area}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <button
-        onClick={() => handleFilterClick("transportMode")}
-        className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#f2e8e9] pl-4 pr-2 hover:bg-[#e6d1d2] transition-colors"
-      >
-        <p className="text-[#1a0e0f] text-sm font-medium leading-normal">Transport Mode</p>
-        <div className="text-[#1a0e0f]" data-icon="CaretDown" data-size="20px" data-weight="regular">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path>
-          </svg>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Commute Time
+            </label>
+            <select
+              value={filters.commuteWindow}
+              onChange={(e) => handleChange("commuteWindow", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+            >
+              <option value="">Any time</option>
+              {commuteWindows.map((window) => (
+                <option key={window} value={window}>
+                  {window}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Min Match %
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={filters.minPercentage}
+              onChange={(e) =>
+                handleChange(
+                  "minPercentage",
+                  Math.min(100, Math.max(0, Number(e.target.value) || 0))
+                )
+              }
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+              placeholder="0"
+            />
+          </div>
         </div>
-      </button>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onReset}
+            className="rounded-lg border border-[#e6d1d2] px-4 py-2 text-sm font-semibold text-[#1a0e0f] hover:bg-[#f2e8e9]"
+            type="button"
+          >
+            Clear Filters
+          </button>
+          <button
+            onClick={onApply}
+            className="rounded-lg bg-[#ce1c2b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#b31825]"
+            type="button"
+          >
+            Show Matches
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default FilterBar;
-
