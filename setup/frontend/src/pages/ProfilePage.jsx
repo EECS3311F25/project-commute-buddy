@@ -6,8 +6,8 @@ export default function ProfilePage() {
   const [routes, setRoutes] = useState([]); // all available routes
   const [selectedRoutes, setSelectedRoutes] = useState([]); // user preferences
   const [message, setMessage] = useState("");
-  const [userData, setUserData] = useState({ 
-    name: "", 
+  const [userData, setUserData] = useState({
+    name: "",
     email: "",
     startArea: "",
     transportMode: "",
@@ -259,12 +259,12 @@ export default function ProfilePage() {
             className="w-full border rounded p-2 mt-1"
           />
           {userData.profileImage && (
-            <img 
-              src={userData.profileImage} 
-              alt="Profile preview" 
+            <img
+              src={userData.profileImage}
+              alt="Profile preview"
               className="mt-2 w-20 h-20 rounded-full object-cover border"
               onError={(e) => {
-                e.target.style.display = 'none';
+                e.target.style.display = "none";
               }}
             />
           )}
@@ -298,12 +298,16 @@ export default function ProfilePage() {
             className="w-full border rounded p-2 mt-1"
           >
             <option value="">Select a time window</option>
-            <option value="Early Morning (5-7 AM)">Early Morning (5-7 AM)</option>
+            <option value="Early Morning (5-7 AM)">
+              Early Morning (5-7 AM)
+            </option>
             <option value="Morning (7-9 AM)">Morning (7-9 AM)</option>
             <option value="Midday (9 AM-1 PM)">Midday (9 AM-1 PM)</option>
             <option value="Afternoon (1-4 PM)">Afternoon (1-4 PM)</option>
             <option value="Evening (4-7 PM)">Evening (4-7 PM)</option>
-            <option value="Late Evening (7-10 PM)">Late Evening (7-10 PM)</option>
+            <option value="Late Evening (7-10 PM)">
+              Late Evening (7-10 PM)
+            </option>
           </select>
         </label>
 
@@ -316,13 +320,16 @@ export default function ProfilePage() {
               placeholder="Add an interest (e.g., Sports, Music)"
               value={interestInput}
               onChange={(e) => setInterestInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
                   e.preventDefault();
-                  if (interestInput.trim() && !userData.interests.includes(interestInput.trim())) {
+                  if (
+                    interestInput.trim() &&
+                    !userData.interests.includes(interestInput.trim())
+                  ) {
                     setUserData({
                       ...userData,
-                      interests: [...userData.interests, interestInput.trim()]
+                      interests: [...userData.interests, interestInput.trim()],
                     });
                     setInterestInput("");
                   }
@@ -333,10 +340,13 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => {
-                if (interestInput.trim() && !userData.interests.includes(interestInput.trim())) {
+                if (
+                  interestInput.trim() &&
+                  !userData.interests.includes(interestInput.trim())
+                ) {
                   setUserData({
                     ...userData,
-                    interests: [...userData.interests, interestInput.trim()]
+                    interests: [...userData.interests, interestInput.trim()],
                   });
                   setInterestInput("");
                 }
@@ -359,7 +369,9 @@ export default function ProfilePage() {
                     onClick={() => {
                       setUserData({
                         ...userData,
-                        interests: userData.interests.filter((_, i) => i !== index)
+                        interests: userData.interests.filter(
+                          (_, i) => i !== index
+                        ),
                       });
                     }}
                     className="text-blue-600 hover:text-blue-800"

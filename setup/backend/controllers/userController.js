@@ -162,14 +162,21 @@ export const setUserProfile = async (req, res) => {
 
 //UPDATES user's profile
 export const updateUserProfile = async (req, res) => {
+  //normalizes data to remove illegal arguments possible corrupted or mallicious data
+  const normalize = (value) => {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === "string" && value.trim() === "") return undefined;
+    return value;
+  };
+
   try {
-    const { 
-      name, 
-      email, 
-      startArea, 
-      transportMode, 
-      profileImage, 
-      gender, 
+    const {
+      name,
+      email,
+      startArea,
+      transportMode,
+      profileImage,
+      gender,
       interests,
       commuteWindow,
     } = req.body;
@@ -186,17 +193,27 @@ export const updateUserProfile = async (req, res) => {
       user.email = email;
     }
 
-    // Update basic fields
-    if (name !== undefined) user.name = name;
+    // Update basic fields with sanitized values
+    if (normalize(name) !== undefined) user.name = normalize(name);
     if (email !== undefined) user.email = email;
-    
-    // Update new matching fields
-    if (startArea !== undefined) user.startArea = startArea;
-    if (transportMode !== undefined) user.transportMode = transportMode;
-    if (profileImage !== undefined) user.profileImage = profileImage;
-    if (gender !== undefined) user.gender = gender;
-    if (interests !== undefined) user.interests = Array.isArray(interests) ? interests : [];
-    if (commuteWindow !== undefined) user.commuteWindow = commuteWindow;
+
+    // Update new matching fields with sanitized values
+    if (normalize(startArea) !== undefined)
+      user.startArea = normalize(startArea);
+
+    if (normalize(transportMode) !== undefined)
+      user.transportMode = normalize(transportMode);
+
+    if (normalize(profileImage) !== undefined)
+      user.profileImage = normalize(profileImage);
+
+    if (normalize(gender) !== undefined) user.gender = normalize(gender);
+
+    if (normalize(interests) !== undefined)
+      user.interests = Array.isArray(interests) ? interests : [];
+
+    if (normalize(commuteWindow) !== undefined)
+      user.commuteWindow = normalize(commuteWindow);
 
     const updatedUser = await user.save();
 
@@ -213,6 +230,7 @@ export const updateUserProfile = async (req, res) => {
       commuteWindow: updatedUser.commuteWindow,
     });
   } catch (error) {
+    console.log("----------->", error);
     res.status(500).json({ message: "Error updating user profile" });
   }
 };
