@@ -16,7 +16,7 @@ function Login() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
+      const res = await axios.post("http://localhost:5001/api/users/login", {
         email,
         password,
       });
@@ -25,12 +25,12 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // Redirect to content if successful login
+      // Redirect based on role
       if (res.data.user.role === "admin") {
-        console.log("I AM AN ADMIN");
         navigate("/admin");
       } else {
-        navigate("/content");
+        // Regular users go to matches page
+        navigate("/matches");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -147,7 +147,11 @@ function Login() {
                 </button>
               </div>
 
-              {error && <p style={{ color: "red" }}>{error}</p>}
+              {error && (
+                <div className="px-4 py-3">
+                  <p className="text-red-600 text-sm font-medium">{error}</p>
+                </div>
+              )}
             </form>
 
             <button
