@@ -42,6 +42,10 @@ Our system will follow the **MVC architecture** pattern, ensuring modular and ma
 
 ## Installation (Setup Instructions)
 
+> Install git if you haven't already by visiting this guide https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
+> Install node.js if you haven't already by visiting this guide https://nodejs.org/en/download
+
 ```bash
 # Clone the repo
 git clone https://github.com/EECS3311F25/project-commute-buddy.git
@@ -57,7 +61,7 @@ npm install
 # File must be placed in backend/:
 cat .env.example > .env
 
-# Start server
+# Start server (server needs MongoDB, check **Known Issues** tab for more info on installation steps.
 node server.js
 
 # Install dependencies on frontend. Go to project folder and enter:
@@ -70,8 +74,12 @@ npm start
 
 ## Known Issues
 
-> Sometimes the build from frontend opens the browser before it gets compiled. To fix this, either wait till it's compiled and reload the webpage, or type: `BROWSER=none npm start` and once it's compiled, click on the link shown on the console.
+> Sometimes the build from frontend opens the browser before it gets compiled. To fix this, either wait till it's compiled and reload the webpage, or type: `BROWSER=none npm start` and once it's compiled, click on the link `Local: http://localhost:3000` shown on the console.
 
-> Currently the `/api/users` route used may be blocked by some web browsers and may result in an error in creating a user successfully. To resolve this, either disable your browsers ad blocker or open this in incognito mode.
+> Currently the `/api/users` route used may be blocked by some web browsers and may result in an error in creating a user successfully. To resolve this, either disable your browsers ad blocker or open frontend in incognito mode.
 
 > Please make sure you have mongoDB installed in your system for the app to connect. Installation instructions for MongoDB can be found here: https://www.mongodb.com/try/download/community
+
+> Sometimes cors and other browsers may not allow frontend to connect to server through your local ip address, in this case use `http://localhost:3000` to host the app's frontend instead. (Most of these issues are due to the app being in a dev environment and not a production build)
+
+
