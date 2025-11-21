@@ -5,7 +5,7 @@ import {
   getMyChats,
   getMessagesByChatId,
   sendMessage,
-} from "../controllers/messageController.js";
+} from "../controllers/messagesController.js";
 
 const router = Router();
 

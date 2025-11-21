@@ -5,7 +5,7 @@ import ChatRoom from "../models/ChatRoom.js";
 //create or get the chatroom between 2 users
 export default openOrCreateChat = async (req, res) => {
   try {
-    const userId = req.user.id; // from authMiddleware
+    const userId = req.user.id; // from authMiddleware 
     const friendId = req.params.friendId;
 
     // Always store user1 < user2 for consistency

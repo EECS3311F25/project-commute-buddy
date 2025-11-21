@@ -1,5 +1,5 @@
 //importing page routes
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
@@ -12,49 +12,72 @@ import Forbidden from "./pages/Forbidden.jsx";
 import CommuteRequests from "./pages/CommuteRequests.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import Messages from "./pages/Messages.jsx";
+import ChatWindowPage from "./pages/ChatWindowPage.jsx";
 
 function App() {
-
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
 
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/403" element={<Forbidden />} />
-        <Route path="/requests" element={
-          <ProtectedRoute>
-            <CommuteRequests />
-          </ProtectedRoute>
-        }/>
-
+        <Route
+          path="/requests"
+          element={
+            <ProtectedRoute>
+              <CommuteRequests />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Protected Pages */}
-        <Route path="/content" element={
-          <ProtectedRoute>
-            <Content/>
-          </ProtectedRoute>
-        }/>
+        <Route
+          path="/content"
+          element={
+            <ProtectedRoute>
+              <Content />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/matches" element={
-          <ProtectedRoute>
-            <Matches />
-          </ProtectedRoute>
-        }/>
+        <Route
+          path="/matches"
+          element={
+            <ProtectedRoute>
+              <Matches />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        }/>
-        
-        <Route path="/messages" element={
-          <ProtectedRoute>
-            <Messages />
-          </ProtectedRoute>
-        }/>
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/messages/:chatRoomId"
+          element={
+            <ProtectedRoute>
+              <ChatWindowPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* 🔐 Admin-only route */}
         <Route
@@ -70,7 +93,7 @@ function App() {
         <Route path="/" element={<Home />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
 export default App;
