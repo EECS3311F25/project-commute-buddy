@@ -41,6 +41,7 @@ function Navbar() {
     { label: "Home", to: "/home" },
     { label: "Matches", to: "/matches" },
     { label: "Connections", to: "/requests" },
+    {label: "Messages", to: "/messages"},
     { label: "Profile", to: "/profile" },
   ];
 

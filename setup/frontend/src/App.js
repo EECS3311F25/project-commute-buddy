@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
 import Forbidden from "./pages/Forbidden.jsx";
 import CommuteRequests from "./pages/CommuteRequests.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import Messages from "./pages/Messages.jsx";
 
 function App() {
 
@@ -46,6 +47,12 @@ function App() {
         <Route path="/profile" element={
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        }/>
+        
+        <Route path="/messages" element={
+          <ProtectedRoute>
+            <Messages />
           </ProtectedRoute>
         }/>
 
