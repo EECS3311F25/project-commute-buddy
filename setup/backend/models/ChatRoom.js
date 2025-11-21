@@ -20,6 +20,6 @@ const chatRoomSchema = new mongoose.Schema({
 });
 
 //only 1 chat room per pair
-chatRoomScheme.index({ user1Id: 1, user2Id: 1 }, { unique: true });
+chatRoomSchema.index({ user1Id: 1, user2Id: 1 }, { unique: true });
 
 export default mongoose.model("ChatRoom", chatRoomSchema);

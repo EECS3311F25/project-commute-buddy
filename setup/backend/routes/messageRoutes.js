@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protect, verifyToken } from "../middleware/authMiddleware";
+import { protect, verifyToken } from "../middleware/authMiddleware.js";
 import {
   openOrCreateChat,
   getMyChats,

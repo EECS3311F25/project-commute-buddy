@@ -11,19 +11,22 @@ export default function Messages() {
     loadChats();
   }, []);
 
-const loadChats = async () => {
-  try {
-    const res = await getMyChats();
-    setChats(res.data.chatRooms);
-  } catch (err) {
-    console.error("Failed to load chats", err);
-  }
-};
-
+  const loadChats = async () => {
+    try {
+      const res = await getMyChats();
+      setChats(res.data.chatRooms);
+    } catch (err) {
+      console.error("Failed to load chats", err);
+    }
+  };
 
   const handleOpenChat = async (friendId) => {
-    const res = await openOrCreateChat(friendId);
-    navigate(`/messages/${res.data.chatRoom._id}`);
+    try {
+      const res = await openOrCreateChat(friendId);
+      navigate(`/messages/${res.data.chatRoom._id}`);
+    } catch (err) {
+      console.error("Failed to open chat", err);
+    }
   };
 
   return (

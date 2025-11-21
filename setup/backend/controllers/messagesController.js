@@ -1,9 +1,9 @@
-import User from "../models/User";
-import ChatMessagesTable from "../models/ChatMessagesTable.js";
+//import User from "../models/User.js";
+//import ChatMessagesTable from "../models/ChatMessagesTable.js";
 import ChatRoom from "../models/ChatRoom.js";
 
 //create or get the chatroom between 2 users
-export default openOrCreateChat = async (req, res) => {
+export const openOrCreateChat = async (req, res) => {
   try {
     const userId = req.user.id; // from authMiddleware 
     const friendId = req.params.friendId;
