@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import CommuteRequest from "../models/CommuteRequest.js";
 import User from "../models/User.js";
 import { calculateCommonRoutePercentage } from "../utils/matchCalculator.js";
+import ChatRoom from "../models/ChatRoom.js";
 
 export const sendRequest = async (req, res) => {
   const { receiver, message } = req.body;
@@ -22,7 +23,9 @@ export const sendRequest = async (req, res) => {
       return res.status(404).json({ message: "Receiver not found" });
 
     if (receiver._id.toString() === senderId)
-      return res.status(400).json({ message: "Cannot send request to yourself" });
+      return res
+        .status(400)
+        .json({ message: "Cannot send request to yourself" });
 
     const existing = await CommuteRequest.findOne({
       sender: senderId,
@@ -50,17 +53,38 @@ export const respondRequest = async (req, res) => {
 
   try {
     const request = await CommuteRequest.findById(requestId);
-    if (!request)
-      return res.status(404).json({ message: "Request not found" });
+    if (!request) return res.status(404).json({ message: "Request not found" });
 
+    // Only the intended receiver can respond
     if (request.receiver.toString() !== userId)
       return res.status(403).json({ message: "Not authorized" });
 
     if (request.status !== "pending")
       return res.status(400).json({ message: "Request already handled" });
 
+    // Apply accept/decline
     request.status = action === "accept" ? "accepted" : "declined";
     await request.save();
+
+    // If accepted -> create chatroom if one does not exist
+    if (action === "accept") {
+      const userA = userId;
+      const userB = request.sender.toString();
+
+      const sortedUsers = [userA, userB].sort();
+
+      let room = await ChatRoom.findOne({
+        user1Id: sortedUsers[0],
+        user2Id: sortedUsers[1],
+      });
+
+      if (!room) {
+        await ChatRoom.create({
+          user1Id: sortedUsers[0],
+          user2Id: sortedUsers[1],
+        });
+      }
+    }
 
     res.json({ message: `Request ${request.status}` });
   } catch (err) {
@@ -115,7 +139,10 @@ export const findMatches = async (req, res) => {
     }
 
     // Check if user has any routes
-    if (!currentUser.preferredRoutes || currentUser.preferredRoutes.length === 0) {
+    if (
+      !currentUser.preferredRoutes ||
+      currentUser.preferredRoutes.length === 0
+    ) {
       return res.status(200).json({
         matches: [],
         totalMatches: 0,
@@ -147,7 +174,11 @@ export const findMatches = async (req, res) => {
 
     // Build query for users with overlapping routes
     const matchQuery = {
-      _id: { $nin: Array.from(excludedUserIds).map(id => new mongoose.Types.ObjectId(id)) },
+      _id: {
+        $nin: Array.from(excludedUserIds).map(
+          (id) => new mongoose.Types.ObjectId(id)
+        ),
+      },
     };
 
     if (route) {
@@ -212,10 +243,16 @@ export const findMatches = async (req, res) => {
           return b.totalSharedRoutes - a.totalSharedRoutes;
         }
         // 3: Transport mode match (bonus if same transport mode as current user)
-        const aTransportMatch = currentUser.transportMode && 
-          a.transportMode === currentUser.transportMode ? 1 : 0;
-        const bTransportMatch = currentUser.transportMode && 
-          b.transportMode === currentUser.transportMode ? 1 : 0;
+        const aTransportMatch =
+          currentUser.transportMode &&
+          a.transportMode === currentUser.transportMode
+            ? 1
+            : 0;
+        const bTransportMatch =
+          currentUser.transportMode &&
+          b.transportMode === currentUser.transportMode
+            ? 1
+            : 0;
         return bTransportMatch - aTransportMatch;
       })
       // Limit results
@@ -231,4 +268,3 @@ export const findMatches = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-

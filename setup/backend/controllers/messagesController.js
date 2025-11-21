@@ -1,6 +1,7 @@
 //import User from "../models/User.js";
-//import ChatMessagesTable from "../models/ChatMessagesTable.js";
+import ChatMessage from "../models/ChatMessagesTable.js";
 import ChatRoom from "../models/ChatRoom.js";
+import mongoose from "mongoose";
 
 //create or get the chatroom between 2 users
 export const openOrCreateChat = async (req, res) => {
@@ -8,24 +9,40 @@ export const openOrCreateChat = async (req, res) => {
     const userId = req.user.id; // from authMiddleware 
     const friendId = req.params.friendId;
 
+    //check for friendID
+    if (!friendId) {
+      return res.status(400).json({ message: "Friend ID is required" });
+    }
+    //validates friendID
+    if (!mongoose.Types.ObjectId.isValid(friendId)) {
+      return res.status(400).json({ message: "Invalid friend ID" });
+    }
+
     // Always store user1 < user2 for consistency
-    const sortedUsers = [userId, friendId].sort();
+    const sortedUsers = [userId.toString(), friendId.toString()].sort();
+
+    const user1ObjId = new mongoose.Types.ObjectId(sortedUsers[0]);
+    const user2ObjId = new mongoose.Types.ObjectId(sortedUsers[1]);
+
+    console.log("openOrCreateChat:", { userId, friendId });
 
     let chatRoom = await ChatRoom.findOne({
-      user1Id: sortedUsers[0],
-      user2Id: sortedUsers[1],
+      user1Id: user1ObjId,
+      user2Id: user2ObjId,
     });
 
-    // If not exists -> create it
+    //create a chatroom if none exist
     if (!chatRoom) {
       chatRoom = await ChatRoom.create({
-        user1Id: sortedUsers[0],
-        user2Id: sortedUsers[1],
+        user1Id: user1ObjId,
+        user2Id: user2ObjId,
       });
     }
 
     return res.json({ success: true, chatRoom });
   } catch (err) {
+    console.error("openOrCreateChat ERROR:", err);
+
     return res.status(500).json({ error: err.message });
   }
 };
@@ -38,7 +55,7 @@ export const getMyChats = async (req, res) => {
     const chatRooms = await ChatRoom.find({
       $or: [{ user1Id: userId }, { user2Id: userId }],
     }).populate("user1Id user2Id", "name email profilePic");
-
+    //console.log("getMessage JSON:", chatRooms);
     return res.json({ success: true, chatRooms });
   } catch (err) {
     return res.status(500).json({ error: err.message });
