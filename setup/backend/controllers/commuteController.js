@@ -4,6 +4,7 @@ import CommuteRequest from "../models/CommuteRequest.js";
 import User from "../models/User.js";
 import { calculateCommonRoutePercentage } from "../utils/matchCalculator.js";
 import ChatRoom from "../models/ChatRoom.js";
+import { io } from "../server.js";
 
 export const sendRequest = async (req, res) => {
   const { receiver, message } = req.body;
@@ -41,6 +42,12 @@ export const sendRequest = async (req, res) => {
       message,
     });
 
+    // Emit real-time notification to the receiver
+    io.to(receiver._id.toString()).emit("incoming-request", {
+      request: newRequest,
+      senderId,
+    });
+
     res.status(201).json(newRequest);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -65,6 +72,16 @@ export const respondRequest = async (req, res) => {
     // Apply accept/decline
     request.status = action === "accept" ? "accepted" : "declined";
     await request.save();
+
+    // After updating the request
+    if (action === "accept" || action === "decline") {
+      // Notify sender about the response
+      io.to(request.sender.toString()).emit("request-response", {
+        requestId,
+        status: request.status,
+        receiverId: userId,
+      });
+    }
 
     // If accepted -> create chatroom if one does not exist
     if (action === "accept") {

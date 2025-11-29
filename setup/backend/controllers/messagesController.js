@@ -94,9 +94,22 @@ export const sendMessage = async (req, res) => {
       messageText,
     });
 
+    const populatedMessage = await newMessage.populate(
+      "senderId",
+      "name profilePic"
+    );
+
     // in future, for push notifications, when we use socket.io we will emit an event here
     // The future is here, lol - Shaun :)
-    io.to(chatRoomId).emit("new-message", newMessage);
+    io.to(chatRoomId).emit("new-message", {
+      _id: populatedMessage._id,
+      chatRoomId: populatedMessage.chatRoomId,
+      senderId: populatedMessage.senderId._id, // <--- crucial
+      senderName: populatedMessage.senderId.name,
+      senderPic: populatedMessage.senderId.profilePic,
+      messageText: populatedMessage.messageText,
+      timeStamp: populatedMessage.timeStamp,
+    });
 
     return res.json({ success: true, message: newMessage });
   } catch (err) {

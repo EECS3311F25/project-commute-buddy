@@ -1,5 +1,9 @@
 //importing page routes
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { io } from "socket.io-client";
+
+//Importing pages and components
 import Home from "./pages/Home.jsx";
 import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
@@ -14,7 +18,36 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import Messages from "./pages/Messages.jsx";
 import ChatWindowPage from "./pages/ChatWindowPage.jsx";
 
+//Initializing socket
+export const socket = io("http://localhost:5001", { withCredentials: true });
+
 function App() {
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      // Join personal room for notifications
+      socket.emit("join-room", userId);
+
+      // Incoming commute request notifications
+      socket.on("incoming-request", (data) => {
+        alert(`New commute request from ${data.senderId}`);
+        console.log("Incoming request data:", data);
+      });
+
+      // Receive updates on sent requests
+      socket.on("request-response", (data) => {
+        alert(`Your commute request was ${data.status}`);
+        console.log("Request response:", data);
+      });
+
+      // Clean up listener on unmount
+      return () => {
+        socket.off("incoming-request");
+        socket.off("request-response");
+      };
+    }
+  }, []);
+
   return (
     <Router>
       <Navbar />

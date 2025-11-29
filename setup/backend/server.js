@@ -44,7 +44,7 @@ app.use("/api/messages", messageRoutes);
 // --- Create HTTP server & attach Socket.io ---
 const server = http.createServer(app);
 
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
@@ -56,17 +56,20 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Join a chat room
+  // --- Join personal room for notifications ---
+  socket.on("join-room", (userId) => {
+    console.log(`User ${userId} joined personal room`);
+    socket.join(userId); // Now emits to io.to(userId) will reach them
+  });
+
+  // Chat room handling
   socket.on("join-chat", (chatRoomId) => {
     socket.join(chatRoomId);
     console.log(`Socket ${socket.id} joined chat room ${chatRoomId}`);
   });
 
-  // Listen for new messages
   socket.on("send-message", (data) => {
     const { chatRoomId, message } = data;
-
-    // Broadcast the new message to all other clients in the same room
     socket.to(chatRoomId).emit("receive-message", message);
   });
 
@@ -79,4 +82,4 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-export { io };
+//export { io };

@@ -1,10 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+//import { io } from "socket.io-client";
+import { socket } from "../App.js";
 import { getMessages, sendMessage } from "../api/chatApi.jsx";
 import ChatWindow from "../components/common/ChatWindow.jsx";
-
-const socket = io("http://localhost:5001");
 
 export default function ChatWindowPage() {
   const { chatRoomId } = useParams();
@@ -19,21 +18,28 @@ export default function ChatWindowPage() {
     loadMessages();
 
     //Join socket room
-    socket.emit("joinRoom", chatRoomId);
+    socket.emit("join-chat", chatRoomId);
 
     //Listen for new incoming messages
-    socket.on("newMessage", (msg) => {
+    socket.on("receive-message", (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
     return () => {
-      socket.off("newMessage");
+      socket.off("receive-message");
     };
     // eslint-disable-next-line
   }, [chatRoomId]);
 
   const handleSend = async (text) => {
-    await sendMessage(chatRoomId, text);
+    const res = await sendMessage(chatRoomId, text); // save to DB
+    const message = res.data.message;
+
+    // Push locally for sender
+    setMessages((prev) => [...prev, message]);
+
+    // Broadcast to others in the room
+    socket.emit("send-message", { chatRoomId, message });
   };
 
   return <ChatWindow messages={messages} onSend={handleSend} />;
