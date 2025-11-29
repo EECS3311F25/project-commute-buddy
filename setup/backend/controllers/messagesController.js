@@ -2,11 +2,12 @@
 import ChatMessage from "../models/ChatMessagesTable.js";
 import ChatRoom from "../models/ChatRoom.js";
 import mongoose from "mongoose";
+import { io } from "../server.js";
 
 //create or get the chatroom between 2 users
 export const openOrCreateChat = async (req, res) => {
   try {
-    const userId = req.user.id; // from authMiddleware 
+    const userId = req.user.id; // from authMiddleware
     const friendId = req.params.friendId;
 
     //check for friendID
@@ -94,7 +95,8 @@ export const sendMessage = async (req, res) => {
     });
 
     // in future, for push notifications, when we use socket.io we will emit an event here
-    // io.to(chatRoomId).emit("new-message", newMessage);
+    // The future is here, lol - Shaun :)
+    io.to(chatRoomId).emit("new-message", newMessage);
 
     return res.json({ success: true, message: newMessage });
   } catch (err) {
