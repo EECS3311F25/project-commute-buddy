@@ -13,18 +13,28 @@ export default function ChatWindowPage() {
   };
 
   const handleSend = async (text) => {
-    const res = await sendMessage(chatRoomId, text);
-    setMessages((prev) => [...prev, res.data.message]);
+    try {
+      await sendMessage(chatRoomId, text);
+
+      // 🔥 Re-fetch full list to reflect timestamps, ordering, etc.
+      await loadMessages();
+    } catch (err) {
+      console.error("Failed to send message", err);
+    }
   };
 
+  // Reload whenever chatRoomId changes
   useEffect(() => {
     loadMessages();
+    // eslint-disable-next-line
   }, [chatRoomId]);
 
-  return (
-    <ChatWindow
-      messages={messages}
-      onSend={handleSend}
-    />
-  );
+  // OPTIONAL: Live updating every 2s
+  useEffect(() => {
+    const interval = setInterval(loadMessages, 2000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line
+  }, [chatRoomId]);
+
+  return <ChatWindow messages={messages} onSend={handleSend} />;
 }
