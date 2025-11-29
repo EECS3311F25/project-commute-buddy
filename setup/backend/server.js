@@ -1,13 +1,14 @@
 // backend/server.js
 
-//import environment variables
 import dotenv from "dotenv";
 dotenv.config();
 
-//import modules and routes
 import express, { json } from "express";
 import { connect } from "mongoose";
 import cors from "cors";
+import http from "http";          // needed for socket.io
+import { Server } from "socket.io";
+
 import userRoutes from "./routes/userRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
 import commuteRoutes from "./routes/commuteRoutes.js";
@@ -15,30 +16,67 @@ import messageRoutes from "./routes/messageRoutes.js";
 
 const app = express();
 
-// CORS configuration - allow requests from frontend
-// Must be before other middleware
+// --- CORS middleware ---
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow requests from React frontend
-    credentials: true, // Allow cookies/credentials
+    origin: "http://localhost:3000",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     exposedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 200, // Support legacy browsers
+    optionsSuccessStatus: 200,
   })
 );
 
 app.use(json());
 
-// Connect to local MongoDB
+// --- MongoDB connection ---
 connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
+// --- Routes ---
 app.use("/api/users", userRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/commute", commuteRoutes);
 app.use("/api/messages", messageRoutes);
 
-const PORT = process.env.PORT || 5001; // Changed to 5001 to avoid conflict with macOS AirPlay (port 5000)
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// --- Create HTTP server & attach Socket.io ---
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+// --- Socket.io connection ---
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  // Join a chat room
+  socket.on("join-chat", (chatRoomId) => {
+    socket.join(chatRoomId);
+    console.log(`Socket ${socket.id} joined chat room ${chatRoomId}`);
+  });
+
+  // Listen for new messages
+  socket.on("send-message", (data) => {
+    const { chatRoomId, message } = data;
+
+    // Broadcast the new message to all other clients in the same room
+    socket.to(chatRoomId).emit("receive-message", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+
+// --- Start server ---
+const PORT = process.env.PORT || 5001;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+export { io };
