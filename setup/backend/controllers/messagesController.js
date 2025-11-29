@@ -55,7 +55,7 @@ export const getMyChats = async (req, res) => {
 
     const chatRooms = await ChatRoom.find({
       $or: [{ user1Id: userId }, { user2Id: userId }],
-    }).populate("user1Id user2Id", "name email profilePic");
+    }).populate("user1Id user2Id", "name email profileImage");
     //console.log("getMessage JSON:", chatRooms);
     return res.json({ success: true, chatRooms });
   } catch (err) {
