@@ -16,7 +16,7 @@ export default function ChatList({ chats, onOpenChat }) {
             key={chat._id}
             chatId={chat._id}
             name={otherUser.name}
-            profilePic={otherUser.profilePic}
+            profilePic={otherUser.profileImage}
             onClick={() => onOpenChat(otherUser._id)}
           />
         );
