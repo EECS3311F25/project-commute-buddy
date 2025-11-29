@@ -49,7 +49,7 @@ function Signup() {
     }
 
     try {
-      const res = await axios.post(
+      /*const res =  - again, just to stop the linter from complaining*/await axios.post(
         "http://localhost:5001/api/users/register",
         form
       );

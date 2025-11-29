@@ -6,7 +6,7 @@ dotenv.config();
 import express, { json } from "express";
 import { connect } from "mongoose";
 import cors from "cors";
-import http from "http";          // needed for socket.io
+import http from "http"; // needed for socket.io
 import { Server } from "socket.io";
 
 import userRoutes from "./routes/userRoutes.js";
