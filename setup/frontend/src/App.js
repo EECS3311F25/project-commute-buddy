@@ -40,10 +40,16 @@ function App() {
         console.log("Request response:", data);
       });
 
+      socket.on("new-match", (data) => {
+        console.log("New match received:", data);
+        localStorage.setItem("hasNewMatches", "true");
+      });
+
       // Clean up listener on unmount
       return () => {
         socket.off("incoming-request");
         socket.off("request-response");
+        socket.off("new-match");
       };
     }
   }, []);

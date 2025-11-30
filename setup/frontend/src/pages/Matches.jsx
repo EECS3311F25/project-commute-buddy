@@ -87,13 +87,14 @@ function Matches() {
       navigate("/login");
       return;
     }
+    localStorage.setItem("hasNewMatches", "false");
     setFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
     fetchAvailableRoutes();
     fetchMatches(defaultFilters);
     //Just to stop the linter from complaining :(
     // eslint-disable-next-line
-  }, [token, navigate]);
+  }, []);
 
   const handleApplyFilters = () => {
     setAppliedFilters(filters);

@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { socket } from "../../App.js";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -8,13 +9,12 @@ function Navbar() {
   const user = localStorage.getItem("user");
   const parsedUser = user ? JSON.parse(user) : null;
   const role = parsedUser?.role ?? null;
-  const [profileImageLink, setProfileImageLink] = useState([]);
+  const [profileImageLink, setProfileImageLink] = useState([""]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
+  //For new matches
+  const [hasNewMatches, setHasNewMatches] = useState(
+    localStorage.getItem("hasNewMatches") === "true"
+  );
 
   //get users current profile picture, if it exists
   const fetchProfileImage = async () => {
@@ -24,13 +24,53 @@ function Navbar() {
       });
 
       setProfileImageLink(res.data.profileImage);
-      
     } catch (error) {
       console.error("Error fetching User Profile Image:", error);
     }
   };
 
-  fetchProfileImage();
+  useEffect(() => {
+    fetchProfileImage();
+    // eslint-disable-next-line
+  }, []);
+
+  // Socket listener for new matches
+  useEffect(() => {
+    if (!socket) return;
+    const currentUser = parsedUser;
+    if (!currentUser) return;
+
+    const handleNewMatch = (data) => {
+      localStorage.setItem("hasNewMatches", "true");
+      setHasNewMatches(true);
+    };
+
+    socket.on("new-match", handleNewMatch);
+
+    return () => {
+      socket.off("new-match", handleNewMatch);
+    };
+  }, [parsedUser]);
+
+  //Listen to local Storage changes
+  useEffect(() => {
+    const handleStorage = () => {
+      setHasNewMatches(localStorage.getItem("hasNewMatches") === "true");
+    };
+
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("hasNewMatches");
+    navigate("/login");
+  };
 
   // Admin dashboard handles its own navigation
   if (token && role === "admin") {
@@ -39,9 +79,16 @@ function Navbar() {
 
   const primaryLinks = [
     { label: "Home", to: "/home" },
-    { label: "Matches", to: "/matches" },
+    {
+      label: "Matches",
+      to: "/matches",
+      onClick: () => {
+        localStorage.setItem("hasNewMatches", "false");
+        setHasNewMatches(false);
+      },
+    },
     { label: "Connections", to: "/requests" },
-    {label: "Messages", to: "/messages"},
+    { label: "Messages", to: "/messages" },
     { label: "Profile", to: "/profile" },
   ];
 
@@ -70,12 +117,22 @@ function Navbar() {
         {token ? (
           <div style={styles.authenticatedArea}>
             <nav style={styles.linkRow}>
-              {primaryLinks.map((item) => (
-                <Link key={item.to} to={item.to} style={styles.navLink}>
-                  {item.label}
-                </Link>
+              {primaryLinks.map((link) => (
+                <div key={link.to} style={{ position: "relative" }}>
+                  <Link
+                    to={link.to}
+                    onClick={link.onClick}
+                    style={styles.navLink}
+                  >
+                    {link.label}
+                    {link.label === "Matches" && hasNewMatches && (
+                      <span className="ml-1 w-2 h-2 bg-red-600 rounded-full inline-block"></span>
+                    )}
+                  </Link>
+                </div>
               ))}
             </nav>
+
             <div style={styles.actions}>
               <button
                 type="button"
@@ -232,6 +289,15 @@ const styles = {
     borderRadius: "8px",
     textDecoration: "none",
     fontWeight: 600,
+  },
+  badge: {
+    position: "absolute",
+    top: "-4px",
+    right: "-10px",
+    width: "10px",
+    height: "10px",
+    backgroundColor: "red",
+    borderRadius: "50%",
   },
 };
 

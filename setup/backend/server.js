@@ -1,5 +1,4 @@
 // backend/server.js
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -55,6 +54,10 @@ export const io = new Server(server, {
 // --- Socket.io connection ---
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
+
+  socket.on("register-user", (userId) => {
+    socket.join(userId);
+  });
 
   // --- Join personal room for notifications ---
   socket.on("join-room", (userId) => {

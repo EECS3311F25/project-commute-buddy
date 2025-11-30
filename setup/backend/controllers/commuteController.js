@@ -275,6 +275,33 @@ export const findMatches = async (req, res) => {
       // Limit results
       .slice(0, parseInt(limit));
 
+    //For new Matches
+    const newMatchUserIds = [];
+
+    matchesWithDetails.forEach((match) => {
+      if (
+        !currentUser.seenMatches ||
+        !currentUser.seenMatches.includes(match.userId)
+      ) {
+        newMatchUserIds.push(match.userId);
+      }
+    });
+
+    // Notify for each new match
+    newMatchUserIds.forEach((matchUserId) => {
+      // Notify current user
+      io.to(userId.toString()).emit("new-match", { matchedWith: matchUserId });
+      // Notify the matched user
+      io.to(matchUserId.toString()).emit("new-match", { matchedWith: userId });
+    });
+
+    // Update database so we don’t repeat notifications
+    if (newMatchUserIds.length > 0) {
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { seenMatches: { $each: newMatchUserIds } },
+      });
+    }
+
     res.status(200).json({
       matches: matchesWithDetails,
       totalMatches: matchesWithDetails.length,

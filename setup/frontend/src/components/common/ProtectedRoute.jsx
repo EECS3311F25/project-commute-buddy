@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 function ProtectedRoute({ children, requiredRole }) {
   const token = localStorage.getItem("token");
   const userStr = localStorage.getItem("user");
-  
+
   // Parse user safely, handle null case
   let user = null;
   try {
@@ -20,7 +20,7 @@ function ProtectedRoute({ children, requiredRole }) {
 
   //if a specific role is required like "admin" or "user"
   //basically if the user is empty or if they don't have the required role, they get redirected to the forbiden page
-  if(requiredRole && (!user || user.role !== requiredRole)){
+  if (requiredRole && (!user || user.role !== requiredRole)) {
     return <Navigate to="/403" replace />;
   }
 
