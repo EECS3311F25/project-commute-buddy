@@ -63,6 +63,23 @@ function FilterBar({
 
           <div className="flex flex-col gap-2">
             <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Gender
+            </label>
+            <select
+              value={filters.gender}
+              onChange={(e) => handleChange("gender", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+            >
+              <option value="">Any</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-binary">Non-binary</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
               Start Area
             </label>
             <select
@@ -95,6 +112,48 @@ function FilterBar({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Availability
+            </label>
+            <select
+              value={filters.availabilityWindow}
+              onChange={(e) => handleChange("availabilityWindow", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+            >
+              <option value="">Any time</option>
+              {commuteWindows.map((window) => (
+                <option key={window} value={window}>
+                  {window}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Faculty
+            </label>
+            <input
+              value={filters.faculty}
+              onChange={(e) => handleChange("faculty", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+              placeholder="e.g., Lassonde"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-semibold uppercase tracking-wide text-[#945156]">
+              Program
+            </label>
+            <input
+              value={filters.program}
+              onChange={(e) => handleChange("program", e.target.value)}
+              className="rounded-lg border border-[#e6d1d2] bg-[#fbf8f9] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ce1c2b]/30"
+              placeholder="e.g., Computer Science"
+            />
           </div>
 
           <div className="flex flex-col gap-2">
