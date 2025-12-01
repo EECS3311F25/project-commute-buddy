@@ -43,7 +43,21 @@ const userSchema = new mongoose.Schema(
       ],
       default: null,
     },
-    // In User model
+    faculty: { type: String, default: null },
+    program: { type: String, default: null },
+    availabilityWindow: {
+      type: String,
+      enum: [
+        "Early Morning (5-7 AM)",
+        "Morning (7-9 AM)",
+        "Midday (9 AM-1 PM)",
+        "Afternoon (1-4 PM)",
+        "Evening (4-7 PM)",
+        "Late Evening (7-10 PM)",
+        null,
+      ],
+      default: null,
+    },
     seenMatches: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -225,6 +225,18 @@ export const findMatches = async (req, res) => {
     if (commuteWindow) {
       matchQuery.commuteWindow = commuteWindow;
     }
+        if (gender) {
+      matchQuery.gender = gender;
+    }
+    if (faculty) {
+      matchQuery.faculty = faculty;
+    }
+    if (program) {
+      matchQuery.program = program;
+    }
+    if (availabilityWindow) {
+      matchQuery.availabilityWindow = availabilityWindow;
+    }
 
     // Find potential matches
     const potentialMatches = await User.find(matchQuery)
@@ -337,3 +349,4 @@ export const findMatches = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
