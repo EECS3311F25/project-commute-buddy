@@ -45,6 +45,7 @@ function SocketListeners() {
       const senderProfile = data.sender?.profileImage || null;
 
       addNotification({
+        type: "request",
         message: `New commute request from ${senderName}`,
         profileImage: senderProfile,
       });
@@ -53,6 +54,7 @@ function SocketListeners() {
     // Request response
     socket.on("request-response", (data) => {
       addNotification({
+        type: "response",
         message: `Your commute request was ${data.status} by ${
           data.receiver?.name || "Unknown"
         }`,
@@ -66,6 +68,7 @@ function SocketListeners() {
       const matchedProfile = data.matchedUser?.profileImage || null;
 
       addNotification({
+        type: "match",
         message: `You have a new match: ${matchedName}`,
         profileImage: matchedProfile,
       });
