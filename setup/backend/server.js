@@ -12,6 +12,7 @@ import userRoutes from "./routes/userRoutes.js";
 import contentRoutes from "./routes/contentRoutes.js";
 import commuteRoutes from "./routes/commuteRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/commute", commuteRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/auth", authRoutes);
 
 // --- Create HTTP server & attach Socket.io ---
 const server = http.createServer(app);

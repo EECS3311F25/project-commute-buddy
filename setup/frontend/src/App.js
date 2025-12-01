@@ -31,13 +31,45 @@ export const socket = io("http://localhost:5001", { withCredentials: true });
 // Component to handle socket events inside provider
 function SocketListeners() {
   const { addNotification } = useNotifications();
+  const hasToken = document.cookie.includes("token=");
+  const shouldRestoreAuth = !!localStorage.getItem("userId") && hasToken;
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) return;
 
-    // --- Join personal room for notifications ---
-    socket.emit("join-room", userId);
+    //Poll backend until authentication is restored
+    const waitForAuth = async () => {
+      try {
+        const res = await fetch("http://localhost:5001/api/auth/me", {
+          credentials: "include",
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.user) {
+          console.log("Auth restored, joining rooms...");
+
+          // Join personal room
+          socket.emit("join-room", userId);
+
+          // Now safe to fetch chat rooms
+          fetchChatRooms();
+
+          // Stop polling
+          clearInterval(authInterval);
+        }
+      } catch (err) {
+        // Ignore errors while session is restoring
+      }
+    };
+
+    // Run every 500ms until authenticated
+    let authInterval = null;
+
+    if (shouldRestoreAuth) {
+      authInterval = setInterval(waitForAuth, 500);
+    }
 
     // --- Join all chat rooms ---
     const fetchChatRooms = async () => {
@@ -45,6 +77,12 @@ function SocketListeners() {
         const res = await fetch("http://localhost:5001/api/messages/my-chats", {
           credentials: "include",
         });
+
+        if (res.status === 401) {
+          console.warn("Not authenticated yet, delaying room join...");
+          return;
+        }
+
         const data = await res.json();
         if (data.success && data.chatRooms) {
           data.chatRooms.forEach((room) => {
@@ -55,7 +93,6 @@ function SocketListeners() {
         console.error("Failed to join chat rooms:", err);
       }
     };
-    fetchChatRooms();
 
     //Join register-user
     socket.emit("register-user", userId);
@@ -118,6 +155,7 @@ function SocketListeners() {
 
     // --- Cleanup ---
     return () => {
+      if (authInterval) clearInterval(authInterval);
       socket.off("incoming-request", handleIncomingRequest);
       socket.off("request-response", handleRequestResponse);
       socket.off("new-match", handleNewMatch);
