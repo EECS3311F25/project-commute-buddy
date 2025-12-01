@@ -18,139 +18,159 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import Messages from "./pages/Messages.jsx";
 import ChatWindowPage from "./pages/ChatWindowPage.jsx";
 
-//Initializing socket
+// Notifications context and component
+import {
+  NotificationsProvider,
+  useNotifications,
+} from "./contexts/NotificationsContext.jsx";
+import Notifications from "./components/common/Notifications.jsx";
+
+// Initialize socket
 export const socket = io("http://localhost:5001", { withCredentials: true });
 
-function App() {
+// Component to handle socket events inside provider
+function SocketListeners() {
+  const { addNotification } = useNotifications();
+
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    if (userId) {
-      // Join personal room for notifications
-      socket.emit("join-room", userId);
+    if (!userId) return;
 
-      // Incoming commute request notifications
-      socket.on("incoming-request", (data) => {
-        const senderName = data.sender?.name || "Unknown";
-        const senderProfile = data.sender?.profileImage || null;
+    // Join personal room for notifications
+    socket.emit("join-room", userId);
 
-        alert(`New commute request from ${senderName}`);
-        console.log("Incoming request data:", {
-          ...data,
-          senderName,
-          senderProfile,
-        });
+    // Incoming commute request
+    socket.on("incoming-request", (data) => {
+      const senderName = data.sender?.name || "Unknown";
+      const senderProfile = data.sender?.profileImage || null;
 
-        // Optional: you could display senderProfile in a notification component instead of alert
+      addNotification({
+        message: `New commute request from ${senderName}`,
+        profileImage: senderProfile,
+      });
+    });
+
+    // Request response
+    socket.on("request-response", (data) => {
+      addNotification({
+        message: `Your commute request was ${data.status} by ${
+          data.receiver?.name || "Unknown"
+        }`,
+        profileImage: data.receiver?.profileImage || null,
+      });
+    });
+
+    // New match
+    socket.on("new-match", (data) => {
+      const matchedName = data.matchedUser?.name || "Unknown";
+      const matchedProfile = data.matchedUser?.profileImage || null;
+
+      addNotification({
+        message: `You have a new match: ${matchedName}`,
+        profileImage: matchedProfile,
       });
 
-      // Receive updates on sent requests
-      socket.on("request-response", (data) => {
-        alert(`Your commute request was ${data.status}`);
-        console.log("Request response:", data);
-      });
+      localStorage.setItem("hasNewMatches", "true");
+    });
 
-      // New match notifications
-      socket.on("new-match", (data) => {
-        const matchedName = data.matchedUser?.name || "Unknown";
-        const matchedProfile = data.matchedUser?.profileImage || null;
+    // Cleanup listeners on unmount
+    return () => {
+      socket.off("incoming-request");
+      socket.off("request-response");
+      socket.off("new-match");
+    };
+  }, [addNotification]);
 
-        console.log("New match received:", {
-          matchedUserId: data.matchedWith,
-          matchedName,
-          matchedProfile,
-        });
+  return null;
+}
 
-        // Store a flag locally to show badge in UI
-        localStorage.setItem("hasNewMatches", "true");
-      });
-
-      // Clean up listener on unmount
-      return () => {
-        socket.off("incoming-request");
-        socket.off("request-response");
-        socket.off("new-match");
-      };
-    }
-  }, []);
-
+function App() {
   return (
-    <Router>
-      <Navbar />
+    <NotificationsProvider>
+      <Router>
+        <Navbar />
 
-      <Routes>
-        <Route path="/home" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/403" element={<Forbidden />} />
-        <Route
-          path="/requests"
-          element={
-            <ProtectedRoute>
-              <CommuteRequests />
-            </ProtectedRoute>
-          }
-        />
+        <Routes>
+          <Route path="/home" element={<Home />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/403" element={<Forbidden />} />
+          <Route
+            path="/requests"
+            element={
+              <ProtectedRoute>
+                <CommuteRequests />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Protected Pages */}
-        <Route
-          path="/content"
-          element={
-            <ProtectedRoute>
-              <Content />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected Pages */}
+          <Route
+            path="/content"
+            element={
+              <ProtectedRoute>
+                <Content />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/matches"
-          element={
-            <ProtectedRoute>
-              <Matches />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/matches"
+            element={
+              <ProtectedRoute>
+                <Matches />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/messages"
-          element={
-            <ProtectedRoute>
-              <Messages />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <Messages />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/messages/:chatRoomId"
-          element={
-            <ProtectedRoute>
-              <ChatWindowPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/messages/:chatRoomId"
+            element={
+              <ProtectedRoute>
+                <ChatWindowPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* 🔐 Admin-only route */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* 🔐 Admin-only route */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Optional: redirect root ("/") to /home */}
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
+          {/* Optional: redirect root ("/") to /home */}
+          <Route path="/" element={<Home />} />
+        </Routes>
+
+        {/* Socket listener component */}
+        <SocketListeners />
+
+        {/* Notifications UI */}
+        <Notifications />
+      </Router>
+    </NotificationsProvider>
   );
 }
 
