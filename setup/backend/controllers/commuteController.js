@@ -157,6 +157,10 @@ export const findMatches = async (req, res) => {
     startArea,
     route,
     commuteWindow,
+    gender,
+    faculty,
+    program,
+    availabilityWindow,
   } = req.query;
 
   try {
@@ -225,7 +229,7 @@ export const findMatches = async (req, res) => {
     if (commuteWindow) {
       matchQuery.commuteWindow = commuteWindow;
     }
-        if (gender) {
+    if (gender) {
       matchQuery.gender = gender;
     }
     if (faculty) {
@@ -349,4 +353,3 @@ export const findMatches = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-

@@ -57,7 +57,8 @@ function Matches() {
       setError("");
       const params = new URLSearchParams();
       if (filtersToUse.route) params.append("route", filtersToUse.route);
-      if (filtersToUse.startArea) params.append("startArea", filtersToUse.startArea);
+      if (filtersToUse.startArea)
+        params.append("startArea", filtersToUse.startArea);
       if (filtersToUse.commuteWindow)
         params.append("commuteWindow", filtersToUse.commuteWindow);
       if (filtersToUse.availabilityWindow)
@@ -65,7 +66,10 @@ function Matches() {
       if (filtersToUse.gender) params.append("gender", filtersToUse.gender);
       if (filtersToUse.faculty) params.append("faculty", filtersToUse.faculty);
       if (filtersToUse.program) params.append("program", filtersToUse.program);
-      if (filtersToUse.minPercentage && Number(filtersToUse.minPercentage) > 0) {
+      if (
+        filtersToUse.minPercentage &&
+        Number(filtersToUse.minPercentage) > 0
+      ) {
         params.append("minPercentage", filtersToUse.minPercentage);
       }
 
@@ -119,13 +123,17 @@ function Matches() {
   const activeFilterSummaries = useMemo(() => {
     const chips = [];
     if (appliedFilters.route) chips.push(`Route: ${appliedFilters.route}`);
-    if (appliedFilters.startArea) chips.push(`Area: ${appliedFilters.startArea}`);
-    if (appliedFilters.commuteWindow) chips.push(`Time: ${appliedFilters.commuteWindow}`);
+    if (appliedFilters.startArea)
+      chips.push(`Area: ${appliedFilters.startArea}`);
+    if (appliedFilters.commuteWindow)
+      chips.push(`Time: ${appliedFilters.commuteWindow}`);
     if (appliedFilters.availabilityWindow)
       chips.push(`Availability: ${appliedFilters.availabilityWindow}`);
     if (appliedFilters.gender) chips.push(`Gender: ${appliedFilters.gender}`);
-    if (appliedFilters.faculty) chips.push(`Faculty: ${appliedFilters.faculty}`);
-    if (appliedFilters.program) chips.push(`Program: ${appliedFilters.program}`);
+    if (appliedFilters.faculty)
+      chips.push(`Faculty: ${appliedFilters.faculty}`);
+    if (appliedFilters.program)
+      chips.push(`Program: ${appliedFilters.program}`);
     if (appliedFilters.minPercentage && appliedFilters.minPercentage > 0) {
       chips.push(`≥ ${appliedFilters.minPercentage}% match`);
     }
@@ -161,7 +169,8 @@ function Matches() {
               Find Your Commute Buddies
             </h2>
             <p className="px-4 text-[#945156] text-sm font-medium mb-2">
-              Filter by route, start area, and commute time to see the most relevant matches.
+              Filter by route, start area, and commute time to see the most
+              relevant matches.
             </p>
             <div className="p-4">
               <div className="bg-white rounded-lg border border-[#e6d1d2] p-8 text-center">
@@ -222,35 +231,35 @@ function Matches() {
               Find Your Commute Buddies
             </h2>
 
-          <FilterBar
-            filters={filters}
-            onFiltersChange={setFilters}
-            onApply={handleApplyFilters}
-            onReset={handleResetFilters}
-            routes={routes}
-            startAreas={START_AREA_OPTIONS}
-          />
+            <FilterBar
+              filters={filters}
+              onFiltersChange={setFilters}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              routes={routes}
+              startAreas={START_AREA_OPTIONS}
+            />
 
-          {activeFilterSummaries.length > 0 && (
-            <div className="px-4 flex flex-wrap gap-2 pb-2">
-              {activeFilterSummaries.map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-full bg-[#f2e8e9] text-[#1a0e0f] text-xs font-medium px-3 py-1"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-          )}
+            {activeFilterSummaries.length > 0 && (
+              <div className="px-4 flex flex-wrap gap-2 pb-2">
+                {activeFilterSummaries.map((chip) => (
+                  <span
+                    key={chip}
+                    className="rounded-full bg-[#f2e8e9] text-[#1a0e0f] text-xs font-medium px-3 py-1"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Matches List */}
             {matches.length === 0 ? (
               <div className="p-4">
                 <div className="bg-white rounded-lg border border-[#e6d1d2] p-8 text-center">
                   <p className="text-[#945156] text-lg">
-                    No matches for the selected route, time, or area. Try widening your filters or add
-                    more routes in your profile.
+                    No matches for the selected route, time, or area. Try
+                    widening your filters or add more routes in your profile.
                   </p>
                 </div>
               </div>
@@ -267,4 +276,3 @@ function Matches() {
 }
 
 export default Matches;
-
