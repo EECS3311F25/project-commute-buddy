@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 import CommuteRequest from "../models/CommuteRequest.js";
 import User from "../models/User.js";
 import { calculateCommonRoutePercentage } from "../utils/matchCalculator.js";
+import ChatRoom from "../models/ChatRoom.js";
+import { io } from "../server.js";
 
 export const sendRequest = async (req, res) => {
-  const { receiver, message } = req.body;
-  const receiverIdentifier = receiver; // allow email or username
+  const { receiver: receiverIdentifier, message } = req.body;
   const senderId = req.user.id;
 
   try {
@@ -22,13 +23,16 @@ export const sendRequest = async (req, res) => {
       return res.status(404).json({ message: "Receiver not found" });
 
     if (receiver._id.toString() === senderId)
-      return res.status(400).json({ message: "Cannot send request to yourself" });
+      return res
+        .status(400)
+        .json({ message: "Cannot send request to yourself" });
 
     const existing = await CommuteRequest.findOne({
       sender: senderId,
       receiver: receiver._id,
       status: "pending",
     });
+
     if (existing)
       return res.status(400).json({ message: "Request already pending" });
 
@@ -36,6 +40,19 @@ export const sendRequest = async (req, res) => {
       sender: senderId,
       receiver: receiver._id,
       message,
+    });
+
+    // Get sender info
+    const sender = await User.findById(senderId).select("name profileImage");
+
+    // Emit real-time notification to the receiver
+    io.to(receiver._id.toString()).emit("incoming-request", {
+      request: newRequest,
+      sender: {
+        id: sender._id,
+        name: sender.name,
+        profileImage: sender.profileImage || null,
+      },
     });
 
     res.status(201).json(newRequest);
@@ -50,17 +67,52 @@ export const respondRequest = async (req, res) => {
 
   try {
     const request = await CommuteRequest.findById(requestId);
-    if (!request)
-      return res.status(404).json({ message: "Request not found" });
+    if (!request) return res.status(404).json({ message: "Request not found" });
 
+    // Only the intended receiver can respond
     if (request.receiver.toString() !== userId)
       return res.status(403).json({ message: "Not authorized" });
 
     if (request.status !== "pending")
       return res.status(400).json({ message: "Request already handled" });
 
+    // Apply accept/decline
     request.status = action === "accept" ? "accepted" : "declined";
     await request.save();
+
+    // Get receiver info (for sending in notification)
+    const receiver = await User.findById(userId).select("name profileImage");
+
+    // Notify sender about the response
+    io.to(request.sender.toString()).emit("request-response", {
+      requestId,
+      status: request.status,
+      receiver: {
+        id: receiver._id,
+        name: receiver.name,
+        profileImage: receiver.profileImage || null,
+      },
+    });
+
+    // If accepted -> create chatroom if one does not exist
+    if (action === "accept") {
+      const userA = userId;
+      const userB = request.sender.toString();
+
+      const sortedUsers = [userA, userB].sort();
+
+      let room = await ChatRoom.findOne({
+        user1Id: sortedUsers[0],
+        user2Id: sortedUsers[1],
+      });
+
+      if (!room) {
+        await ChatRoom.create({
+          user1Id: sortedUsers[0],
+          user2Id: sortedUsers[1],
+        });
+      }
+    }
 
     res.json({ message: `Request ${request.status}` });
   } catch (err) {
@@ -75,8 +127,8 @@ export const getUserRequests = async (req, res) => {
     const requests = await CommuteRequest.find({
       $or: [{ sender: userId }, { receiver: userId }],
     })
-      .populate("sender", "name email")
-      .populate("receiver", "name email")
+      .populate("sender", "name email profileImage")
+      .populate("receiver", "name email profileImage")
       .sort({ createdAt: -1 });
 
     // add a type field for frontend clarity
@@ -105,10 +157,6 @@ export const findMatches = async (req, res) => {
     startArea,
     route,
     commuteWindow,
-    gender,
-    faculty,
-    program,
-    availabilityWindow,
   } = req.query;
 
   try {
@@ -119,7 +167,10 @@ export const findMatches = async (req, res) => {
     }
 
     // Check if user has any routes
-    if (!currentUser.preferredRoutes || currentUser.preferredRoutes.length === 0) {
+    if (
+      !currentUser.preferredRoutes ||
+      currentUser.preferredRoutes.length === 0
+    ) {
       return res.status(200).json({
         matches: [],
         totalMatches: 0,
@@ -151,7 +202,11 @@ export const findMatches = async (req, res) => {
 
     // Build query for users with overlapping routes
     const matchQuery = {
-      _id: { $nin: Array.from(excludedUserIds).map(id => new mongoose.Types.ObjectId(id)) },
+      _id: {
+        $nin: Array.from(excludedUserIds).map(
+          (id) => new mongoose.Types.ObjectId(id)
+        ),
+      },
     };
 
     if (route) {
@@ -170,7 +225,7 @@ export const findMatches = async (req, res) => {
     if (commuteWindow) {
       matchQuery.commuteWindow = commuteWindow;
     }
-    if (gender) {
+        if (gender) {
       matchQuery.gender = gender;
     }
     if (faculty) {
@@ -228,14 +283,61 @@ export const findMatches = async (req, res) => {
           return b.totalSharedRoutes - a.totalSharedRoutes;
         }
         // 3: Transport mode match (bonus if same transport mode as current user)
-        const aTransportMatch = currentUser.transportMode && 
-          a.transportMode === currentUser.transportMode ? 1 : 0;
-        const bTransportMatch = currentUser.transportMode && 
-          b.transportMode === currentUser.transportMode ? 1 : 0;
+        const aTransportMatch =
+          currentUser.transportMode &&
+          a.transportMode === currentUser.transportMode
+            ? 1
+            : 0;
+        const bTransportMatch =
+          currentUser.transportMode &&
+          b.transportMode === currentUser.transportMode
+            ? 1
+            : 0;
         return bTransportMatch - aTransportMatch;
       })
       // Limit results
       .slice(0, parseInt(limit));
+
+    //For new Matches
+    const newMatchUserIds = [];
+
+    matchesWithDetails.forEach((match) => {
+      if (
+        !currentUser.seenMatches ||
+        !currentUser.seenMatches.includes(match.userId)
+      ) {
+        newMatchUserIds.push(match.userId);
+      }
+    });
+
+    // Notify for each new match
+    for (const matchUserId of newMatchUserIds) {
+      const matchedUser = await User.findById(matchUserId).select(
+        "name profileImage"
+      );
+      // Notify current user
+      io.to(userId.toString()).emit("new-match", {
+        matchedWith: {
+          id: matchedUser._id,
+          name: matchedUser.name,
+          profileImage: matchedUser.profileImage || null,
+        },
+      });
+      // Notify matched user
+      io.to(matchUserId.toString()).emit("new-match", {
+        matchedWith: {
+          id: currentUser._id,
+          name: currentUser.name,
+          profileImage: currentUser.profileImage || null,
+        },
+      });
+    }
+    // Update database so we don’t repeat notifications
+    if (newMatchUserIds.length > 0) {
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { seenMatches: { $each: newMatchUserIds } },
+      });
+    }
 
     res.status(200).json({
       matches: matchesWithDetails,

@@ -24,6 +24,8 @@ function Login() {
       // Save token to localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("userId", res.data.user._id);
+
 
       // Redirect based on role
       if (res.data.user.role === "admin") {

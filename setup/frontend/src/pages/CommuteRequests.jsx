@@ -22,9 +22,12 @@ function CommuteRequests() {
     const fetchRequests = async () => {
       try {
         setError("");
-        const res = await fetch("http://localhost:5001/api/commute/my-requests", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          "http://localhost:5001/api/commute/my-requests",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         if (!res.ok) {
           if (res.status === 401) {
@@ -61,7 +64,11 @@ function CommuteRequests() {
 
       if (!res.ok) alert(data.message || "Error responding to request");
       else {
-        alert(`Request ${action}ed`);
+        if (action === "accept") {
+          alert(`Request ${action}ed`);
+        } else {
+          alert(`Request ${action}d`);
+        }
         setRefresh((r) => !r);
       }
     } catch (err) {
@@ -123,8 +130,9 @@ function CommuteRequests() {
                 Manage Your Commute Requests
               </h2>
               <p className="text-[#945156] text-sm max-w-2xl">
-                View requests you&apos;ve received or sent, and reach out to new commute buddies
-                across the GTA. Keep your commute safe, social, and predictable.
+                View requests you&apos;ve received or sent, and reach out to new
+                commute buddies across the GTA. Keep your commute safe, social,
+                and predictable.
               </p>
             </div>
 
@@ -152,7 +160,9 @@ function CommuteRequests() {
 
             <div className="px-4">
               <div className="rounded-2xl border border-[#f2e8e9] bg-white/80 backdrop-blur p-5 shadow-sm">
-                <h3 className="text-lg font-semibold text-[#1a0e0f] mb-4">Send a new request</h3>
+                <h3 className="text-lg font-semibold text-[#1a0e0f] mb-4">
+                  Send a new request
+                </h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium text-[#945156]">
@@ -166,7 +176,9 @@ function CommuteRequests() {
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label className="text-sm font-medium text-[#945156]">Message</label>
+                    <label className="text-sm font-medium text-[#945156]">
+                      Message
+                    </label>
                     <textarea
                       placeholder="Let them know why you make a great commute buddy!"
                       value={message}
@@ -190,7 +202,8 @@ function CommuteRequests() {
               {filteredRequests.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-[#e6d1d2] bg-white/70 p-8 text-center">
                   <p className="text-[#945156] text-base font-medium">
-                    No {activeTab} requests yet. Start connecting with your fellow commuters!
+                    No {activeTab} requests yet. Start connecting with your
+                    fellow commuters!
                   </p>
                 </div>
               ) : (
@@ -214,16 +227,22 @@ function CommuteRequests() {
                           </p>
                           <p className="text-lg font-semibold text-[#1a0e0f]">
                             {req.type === "received"
-                              ? req.sender?.name || req.sender?.email || "Unknown"
-                              : req.receiver?.name || req.receiver?.email || "Unknown"}
+                              ? req.sender?.name ||
+                                req.sender?.email ||
+                                "Unknown"
+                              : req.receiver?.name ||
+                                req.receiver?.email ||
+                                "Unknown"}
                           </p>
                         </div>
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                            statusColors[req.status] || "bg-gray-100 text-gray-600"
+                            statusColors[req.status] ||
+                            "bg-gray-100 text-gray-600"
                           }`}
                         >
-                          {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                          {req.status.charAt(0).toUpperCase() +
+                            req.status.slice(1)}
                         </span>
                       </div>
 
