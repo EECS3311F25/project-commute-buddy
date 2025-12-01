@@ -105,6 +105,10 @@ export const findMatches = async (req, res) => {
     startArea,
     route,
     commuteWindow,
+    gender,
+    faculty,
+    program,
+    availabilityWindow,
   } = req.query;
 
   try {
@@ -165,6 +169,18 @@ export const findMatches = async (req, res) => {
     }
     if (commuteWindow) {
       matchQuery.commuteWindow = commuteWindow;
+    }
+    if (gender) {
+      matchQuery.gender = gender;
+    }
+    if (faculty) {
+      matchQuery.faculty = faculty;
+    }
+    if (program) {
+      matchQuery.program = program;
+    }
+    if (availabilityWindow) {
+      matchQuery.availabilityWindow = availabilityWindow;
     }
 
     // Find potential matches

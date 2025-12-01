@@ -23,6 +23,10 @@ const defaultFilters = {
   route: "",
   startArea: "",
   commuteWindow: "",
+  availabilityWindow: "",
+  gender: "",
+  faculty: "",
+  program: "",
   minPercentage: 0,
 };
 
@@ -56,6 +60,11 @@ function Matches() {
       if (filtersToUse.startArea) params.append("startArea", filtersToUse.startArea);
       if (filtersToUse.commuteWindow)
         params.append("commuteWindow", filtersToUse.commuteWindow);
+      if (filtersToUse.availabilityWindow)
+        params.append("availabilityWindow", filtersToUse.availabilityWindow);
+      if (filtersToUse.gender) params.append("gender", filtersToUse.gender);
+      if (filtersToUse.faculty) params.append("faculty", filtersToUse.faculty);
+      if (filtersToUse.program) params.append("program", filtersToUse.program);
       if (filtersToUse.minPercentage && Number(filtersToUse.minPercentage) > 0) {
         params.append("minPercentage", filtersToUse.minPercentage);
       }
@@ -109,6 +118,11 @@ function Matches() {
     if (appliedFilters.route) chips.push(`Route: ${appliedFilters.route}`);
     if (appliedFilters.startArea) chips.push(`Area: ${appliedFilters.startArea}`);
     if (appliedFilters.commuteWindow) chips.push(`Time: ${appliedFilters.commuteWindow}`);
+    if (appliedFilters.availabilityWindow)
+      chips.push(`Availability: ${appliedFilters.availabilityWindow}`);
+    if (appliedFilters.gender) chips.push(`Gender: ${appliedFilters.gender}`);
+    if (appliedFilters.faculty) chips.push(`Faculty: ${appliedFilters.faculty}`);
+    if (appliedFilters.program) chips.push(`Program: ${appliedFilters.program}`);
     if (appliedFilters.minPercentage && appliedFilters.minPercentage > 0) {
       chips.push(`≥ ${appliedFilters.minPercentage}% match`);
     }
@@ -250,3 +264,4 @@ function Matches() {
 }
 
 export default Matches;
+
