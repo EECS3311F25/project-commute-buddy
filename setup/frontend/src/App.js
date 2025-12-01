@@ -30,8 +30,17 @@ function App() {
 
       // Incoming commute request notifications
       socket.on("incoming-request", (data) => {
-        alert(`New commute request from ${data.senderId}`);
-        console.log("Incoming request data:", data);
+        const senderName = data.sender?.name || "Unknown";
+        const senderProfile = data.sender?.profileImage || null;
+
+        alert(`New commute request from ${senderName}`);
+        console.log("Incoming request data:", {
+          ...data,
+          senderName,
+          senderProfile,
+        });
+
+        // Optional: you could display senderProfile in a notification component instead of alert
       });
 
       // Receive updates on sent requests
@@ -40,8 +49,18 @@ function App() {
         console.log("Request response:", data);
       });
 
+      // New match notifications
       socket.on("new-match", (data) => {
-        console.log("New match received:", data);
+        const matchedName = data.matchedUser?.name || "Unknown";
+        const matchedProfile = data.matchedUser?.profileImage || null;
+
+        console.log("New match received:", {
+          matchedUserId: data.matchedWith,
+          matchedName,
+          matchedProfile,
+        });
+
+        // Store a flag locally to show badge in UI
         localStorage.setItem("hasNewMatches", "true");
       });
 
