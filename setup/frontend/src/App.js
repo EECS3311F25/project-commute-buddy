@@ -28,17 +28,81 @@ import Notifications from "./components/common/Notifications.jsx";
 // Initialize socket
 export const socket = io("http://localhost:5001", { withCredentials: true });
 
+/* ---------------------------------------------
+   IDLE LOGOUT + ACTIVITY TRACKER
+--------------------------------------------- */
+function setupIdleLogout() {
+  let timeoutId = null;
+  const MAX_IDLE = 60 * 60 * 1000; // 1 hour
+
+  const logoutUser = () => {
+    console.log("User inactive for 1 hour. Logging out...");
+    localStorage.removeItem("userId");
+    document.cookie = "token=; Max-Age=0; path=/;";
+    window.location.href = "/login";
+  };
+
+  const resetTimer = () => {
+    localStorage.setItem("lastActivity", Date.now());
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(logoutUser, MAX_IDLE);
+  };
+
+  // Listen to all activity
+  window.addEventListener("mousemove", resetTimer);
+  window.addEventListener("keydown", resetTimer);
+  window.addEventListener("click", resetTimer);
+  window.addEventListener("scroll", resetTimer);
+
+  resetTimer(); // start timer initially
+}
+
+/* ---------------------------------------------
+   SILENT TOKEN REFRESH
+--------------------------------------------- */
+function useSilentTokenRefresh() {
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const lastActivity = Number(localStorage.getItem("lastActivity") || 0);
+      const now = Date.now();
+      const isActive = now - lastActivity < 60 * 60 * 1000;
+
+      if (!isActive) return;
+
+      try {
+        await fetch("http://localhost:5001/api/auth/refresh", {
+          method: "GET",
+          credentials: "include",
+        });
+      } catch (err) {
+        console.warn("Refresh failed");
+      }
+    }, 5 * 60 * 1000); // every 5 minutes
+
+    return () => clearInterval(interval);
+  }, []);
+}
+
+/* ---------------------------------------------
+   SOCKET LISTENERS
+--------------------------------------------- */
 // Component to handle socket events inside provider
+/* ---------------------------------------------
+   SOCKET LISTENERS
+--------------------------------------------- */
 function SocketListeners() {
   const { addNotification } = useNotifications();
-  const hasToken = document.cookie.includes("token=");
-  const shouldRestoreAuth = !!localStorage.getItem("userId") && hasToken;
+  const userId = localStorage.getItem("userId");
+  const shouldRestoreAuth = !!userId && document.cookie.includes("token=");
+
+  useSilentTokenRefresh();
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
     if (!userId) return;
 
-    //Poll backend until authentication is restored
+    socket.emit("register-user", userId);
+
+    // Poll until auth is restored
     const waitForAuth = async () => {
       try {
         const res = await fetch("http://localhost:5001/api/auth/me", {
@@ -46,70 +110,48 @@ function SocketListeners() {
         });
 
         const data = await res.json();
-
         if (data.success && data.user) {
-          console.log("Auth restored, joining rooms...");
+          console.log("Auth restored — joining rooms...");
 
-          // Join personal room
           socket.emit("join-room", userId);
-
-          // Now safe to fetch chat rooms
           fetchChatRooms();
-
-          // Stop polling
           clearInterval(authInterval);
         }
-      } catch (err) {
-        // Ignore errors while session is restoring
-      }
+      } catch {}
     };
 
-    // Run every 500ms until authenticated
     let authInterval = null;
-
     if (shouldRestoreAuth) {
       authInterval = setInterval(waitForAuth, 500);
     }
 
-    // --- Join all chat rooms ---
     const fetchChatRooms = async () => {
       try {
         const res = await fetch("http://localhost:5001/api/messages/my-chats", {
           credentials: "include",
         });
 
-        if (res.status === 401) {
-          console.warn("Not authenticated yet, delaying room join...");
-          return;
-        }
+        if (res.status === 401) return;
 
         const data = await res.json();
         if (data.success && data.chatRooms) {
-          data.chatRooms.forEach((room) => {
-            socket.emit("join-room", room._id);
-          });
+          data.chatRooms.forEach((room) => socket.emit("join-room", room._id));
         }
       } catch (err) {
         console.error("Failed to join chat rooms:", err);
       }
     };
 
-    //Join register-user
-    socket.emit("register-user", userId);
-
-    // --- Handlers ---
-    const handleIncomingRequest = (data) => {
-      const senderName = data.sender?.name || "Unknown";
-      const senderProfile = data.sender?.profileImage || null;
-
+    // Notification handlers
+    socket.on("incoming-request", (data) => {
       addNotification({
         type: "request",
-        message: `New commute request from ${senderName}`,
-        profileImage: senderProfile,
+        message: `New commute request from ${data.sender?.name || "Unknown"}`,
+        profileImage: data.sender?.profileImage || null,
       });
-    };
+    });
 
-    const handleRequestResponse = (data) => {
+    socket.on("request-response", (data) => {
       addNotification({
         type: "response",
         message: `Your commute request was ${data.status} by ${
@@ -117,27 +159,20 @@ function SocketListeners() {
         }`,
         profileImage: data.receiver?.profileImage || null,
       });
-    };
+    });
 
-    const handleNewMatch = (data) => {
-      const matchedName = data.matchedUser?.name || "Unknown";
-      const matchedProfile = data.matchedUser?.profileImage || null;
-
+    socket.on("new-match", (data) => {
       addNotification({
         type: "match",
-        message: `You have a new match: ${matchedName}`,
-        profileImage: matchedProfile,
+        message: `You have a new match: ${data.matchedUser?.name || "Unknown"}`,
+        profileImage: data.matchedUser?.profileImage || null,
       });
 
       localStorage.setItem("hasNewMatches", "true");
-    };
+    });
 
-    const handleNewMessage = (data) => {
-      // Only notify if the current user is NOT the sender
-      if (data.senderId === userId) return;
-      console.log("SOCKET RECEIVED:", data);
-
-      if (data.suppressNotification) return;
+    socket.on("new-message", (data) => {
+      if (data.senderId === userId || data.suppressNotification) return;
 
       addNotification({
         type: "message",
@@ -145,29 +180,25 @@ function SocketListeners() {
         profileImage: data.senderPic || null,
         chatRoomId: data.chatRoomId,
       });
-    };
+    });
 
-    // --- Register socket listeners ---
-    socket.on("incoming-request", handleIncomingRequest);
-    socket.on("request-response", handleRequestResponse);
-    socket.on("new-match", handleNewMatch);
-    socket.on("new-message", handleNewMessage);
-
-    // --- Cleanup ---
     return () => {
       if (authInterval) clearInterval(authInterval);
-      socket.off("incoming-request", handleIncomingRequest);
-      socket.off("request-response", handleRequestResponse);
-      socket.off("new-match", handleNewMatch);
-      socket.off("new-message", handleNewMessage);
+      socket.off("incoming-request");
+      socket.off("request-response");
+      socket.off("new-match");
+      socket.off("new-message");
     };
-    // eslint-disable-next-line
-  }, []); // run only once on mount
+  }, []);
 
   return null;
 }
 
 function App() {
+  useEffect(() => {
+    setupIdleLogout();
+  }, []);
+
   return (
     <NotificationsProvider>
       <Router>
