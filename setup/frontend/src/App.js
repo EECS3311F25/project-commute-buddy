@@ -36,11 +36,32 @@ function SocketListeners() {
     const userId = localStorage.getItem("userId");
     if (!userId) return;
 
-    // Join personal room for notifications
+    // --- Join personal room for notifications ---
     socket.emit("join-room", userId);
 
-    // Incoming commute request
-    socket.on("incoming-request", (data) => {
+    // --- Join all chat rooms ---
+    const fetchChatRooms = async () => {
+      try {
+        const res = await fetch("http://localhost:5001/api/messages/my-chats", {
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (data.success && data.chatRooms) {
+          data.chatRooms.forEach((room) => {
+            socket.emit("join-room", room._id);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to join chat rooms:", err);
+      }
+    };
+    fetchChatRooms();
+
+    //Join register-user
+    socket.emit("register-user", userId);
+
+    // --- Handlers ---
+    const handleIncomingRequest = (data) => {
       const senderName = data.sender?.name || "Unknown";
       const senderProfile = data.sender?.profileImage || null;
 
@@ -49,10 +70,9 @@ function SocketListeners() {
         message: `New commute request from ${senderName}`,
         profileImage: senderProfile,
       });
-    });
+    };
 
-    // Request response
-    socket.on("request-response", (data) => {
+    const handleRequestResponse = (data) => {
       addNotification({
         type: "response",
         message: `Your commute request was ${data.status} by ${
@@ -60,10 +80,9 @@ function SocketListeners() {
         }`,
         profileImage: data.receiver?.profileImage || null,
       });
-    });
+    };
 
-    // New match
-    socket.on("new-match", (data) => {
+    const handleNewMatch = (data) => {
       const matchedName = data.matchedUser?.name || "Unknown";
       const matchedProfile = data.matchedUser?.profileImage || null;
 
@@ -74,15 +93,38 @@ function SocketListeners() {
       });
 
       localStorage.setItem("hasNewMatches", "true");
-    });
-
-    // Cleanup listeners on unmount
-    return () => {
-      socket.off("incoming-request");
-      socket.off("request-response");
-      socket.off("new-match");
     };
-  }, [addNotification]);
+
+    const handleNewMessage = (data) => {
+      // Only notify if the current user is NOT the sender
+      if (data.senderId === userId) return;
+      console.log("SOCKET RECEIVED:", data);
+
+      if (data.suppressNotification) return;
+
+      addNotification({
+        type: "message",
+        message: `${data.senderName}: ${data.messageText}`,
+        profileImage: data.senderPic || null,
+        chatRoomId: data.chatRoomId,
+      });
+    };
+
+    // --- Register socket listeners ---
+    socket.on("incoming-request", handleIncomingRequest);
+    socket.on("request-response", handleRequestResponse);
+    socket.on("new-match", handleNewMatch);
+    socket.on("new-message", handleNewMessage);
+
+    // --- Cleanup ---
+    return () => {
+      socket.off("incoming-request", handleIncomingRequest);
+      socket.off("request-response", handleRequestResponse);
+      socket.off("new-match", handleNewMatch);
+      socket.off("new-message", handleNewMessage);
+    };
+    // eslint-disable-next-line
+  }, []); // run only once on mount
 
   return null;
 }

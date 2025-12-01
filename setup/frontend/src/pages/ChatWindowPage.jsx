@@ -20,6 +20,9 @@ export default function ChatWindowPage() {
     //Join socket room
     socket.emit("join-chat", chatRoomId);
 
+    //Let everyone know chat is open
+    socket.emit("chat-open", chatRoomId);
+
     //Listen for new incoming messages
     socket.on("receive-message", (msg) => {
       setMessages((prev) => [...prev, msg]);
@@ -27,6 +30,7 @@ export default function ChatWindowPage() {
 
     return () => {
       socket.off("receive-message");
+      socket.emit("chat-close", chatRoomId);
     };
     // eslint-disable-next-line
   }, [chatRoomId]);

@@ -51,17 +51,21 @@ export const io = new Server(server, {
   },
 });
 
+export const activeChats = new Map();
+
 // --- Socket.io connection ---
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
   socket.on("register-user", (userId) => {
+    socket.userId = userId;
     socket.join(userId);
   });
 
   // --- Join personal room for notifications ---
   socket.on("join-room", (userId) => {
     console.log(`User ${userId} joined personal room`);
+    socket.userId = userId;
     socket.join(userId); // Now emits to io.to(userId) will reach them
   });
 
@@ -69,6 +73,16 @@ io.on("connection", (socket) => {
   socket.on("join-chat", (chatRoomId) => {
     socket.join(chatRoomId);
     console.log(`Socket ${socket.id} joined chat room ${chatRoomId}`);
+  });
+
+  socket.on("chat-open", (chatRoomId) => {
+    if (socket.userId) {
+      activeChats.set(socket.userId.toString(), chatRoomId);
+    }
+  });
+
+  socket.on("chat-close", () => {
+    if (socket.userId) activeChats.delete(socket.userId.toString());
   });
 
   socket.on("send-message", (data) => {

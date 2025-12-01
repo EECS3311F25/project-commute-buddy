@@ -2,7 +2,7 @@
 import ChatMessage from "../models/ChatMessagesTable.js";
 import ChatRoom from "../models/ChatRoom.js";
 import mongoose from "mongoose";
-import { io } from "../server.js";
+import { io, activeChats } from "../server.js";
 
 //create or get the chatroom between 2 users
 export const openOrCreateChat = async (req, res) => {
@@ -70,7 +70,7 @@ export const getMessagesByChatId = async (req, res) => {
 
     const messages = await ChatMessage.find({ chatRoomId })
       .sort({ timeStamp: 1 })
-      .populate("senderId", "name profilePic");
+      .populate("senderId", "name profileImage");
 
     return res.json({ success: true, messages });
   } catch (err) {
@@ -96,19 +96,36 @@ export const sendMessage = async (req, res) => {
 
     const populatedMessage = await newMessage.populate(
       "senderId",
-      "name profilePic"
+      "name profileImage"
     );
 
     // in future, for push notifications, when we use socket.io we will emit an event here
     // The future is here, lol - Shaun :)
-    io.to(chatRoomId).emit("new-message", {
+    const chatRoom = await ChatRoom.findById(chatRoomId);
+    const senderId = req.user.id;
+
+    const defaultAvatar =
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAoLc-O2PnJl8pHJpVIiHH2M5nH3zzF_MbnnwatNEv0Nv1vCcgO6ZDV6lHaZIBsD0wvDOtFTdD7jVUqWMQq-KRB9giW4fD4oJFdIMPpkZxxcagTRQr5ip5r0cPy0f07UYzwccPkDB0Z5hx5iuG0Dm4W0RUV-hGtHtCVBu9FAiHPAehH2w8eOkOjkuPNpLCXkenU9xqe5-Z5mPtG-7IHUnubMm_so2w7nYqs8b1ozMJ9JEqbps_5abuX6nXMjj5f8_b26g4180Urz4c";
+
+    // Determine receiverId
+    const receiverId =
+      chatRoom.user1Id.toString() === senderId
+        ? chatRoom.user2Id.toString()
+        : chatRoom.user1Id.toString();
+
+    // Check if receiver is currently inside this chat
+    const isReceiverInChat = activeChats.get(receiverId) === chatRoomId;
+
+    //emit socket event
+    io.to(receiverId).emit("new-message", {
       _id: populatedMessage._id,
       chatRoomId: populatedMessage.chatRoomId,
-      senderId: populatedMessage.senderId._id, // <--- crucial
+      senderId: populatedMessage.senderId._id,
       senderName: populatedMessage.senderId.name,
-      senderPic: populatedMessage.senderId.profilePic,
+      senderPic: populatedMessage.senderId.profileImage || defaultAvatar,
       messageText: populatedMessage.messageText,
       timeStamp: populatedMessage.timeStamp,
+      suppressNotification: !!isReceiverInChat,
     });
 
     return res.json({ success: true, message: newMessage });
