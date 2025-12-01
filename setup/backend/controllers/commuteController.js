@@ -6,6 +6,9 @@ import { calculateCommonRoutePercentage } from "../utils/matchCalculator.js";
 import ChatRoom from "../models/ChatRoom.js";
 import { io } from "../server.js";
 
+const defaultAvatar =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAoLc-O2PnJl8pHJpVIiHH2M5nH3zzF_MbnnwatNEv0Nv1vCcgO6ZDV6lHaZIBsD0wvDOtFTdD7jVUqWMQq-KRB9giW4fD4oJFdIMPpkZxxcagTRQr5ip5r0cPy0f07UYzwccPkDB0Z5hx5iuG0Dm4W0RUV-hGtHtCVBu9FAiHPAehH2w8eOkOjkuPNpLCXkenU9xqe5-Z5mPtG-7IHUnubMm_so2w7nYqs8b1ozMJ9JEqbps_5abuX6nXMjj5f8_b26g4180Urz4c";
+
 export const sendRequest = async (req, res) => {
   const { receiver: receiverIdentifier, message } = req.body;
   const senderId = req.user.id;
@@ -51,7 +54,7 @@ export const sendRequest = async (req, res) => {
       sender: {
         id: sender._id,
         name: sender.name,
-        profileImage: sender.profileImage || null,
+        profileImage: sender.profileImage || defaultAvatar,
       },
     });
 
@@ -90,7 +93,7 @@ export const respondRequest = async (req, res) => {
       receiver: {
         id: receiver._id,
         name: receiver.name,
-        profileImage: receiver.profileImage || null,
+        profileImage: receiver.profileImage || defaultAvatar,
       },
     });
 
@@ -324,7 +327,7 @@ export const findMatches = async (req, res) => {
         matchedWith: {
           id: matchedUser._id,
           name: matchedUser.name,
-          profileImage: matchedUser.profileImage || null,
+          profileImage: matchedUser.profileImage || defaultAvatar,
         },
       });
       // Notify matched user
@@ -332,7 +335,7 @@ export const findMatches = async (req, res) => {
         matchedWith: {
           id: currentUser._id,
           name: currentUser.name,
-          profileImage: currentUser.profileImage || null,
+          profileImage: currentUser.profileImage || defaultAvatar,
         },
       });
     }

@@ -189,6 +189,7 @@ function SocketListeners() {
       socket.off("new-match");
       socket.off("new-message");
     };
+    // eslint-disable-next-line
   }, []);
 
   return null;
