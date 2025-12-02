@@ -55,7 +55,7 @@ export const loginUser = async (req, res) => {
     res.status(200).json({
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role, //include role now
@@ -179,6 +179,9 @@ export const updateUserProfile = async (req, res) => {
       gender,
       interests,
       commuteWindow,
+      faculty,
+      program,
+      availabilityWindow,
     } = req.body;
     const user = await User.findById(req.user.id).select("-password");
 
@@ -214,6 +217,10 @@ export const updateUserProfile = async (req, res) => {
 
     if (normalize(commuteWindow) !== undefined)
       user.commuteWindow = normalize(commuteWindow);
+    if (normalize(faculty) !== undefined) user.faculty = normalize(faculty);
+    if (normalize(program) !== undefined) user.program = normalize(program);
+    if (normalize(availabilityWindow) !== undefined)
+      user.availabilityWindow = normalize(availabilityWindow);
 
     const updatedUser = await user.save();
 
@@ -228,6 +235,9 @@ export const updateUserProfile = async (req, res) => {
       gender: updatedUser.gender,
       interests: updatedUser.interests,
       commuteWindow: updatedUser.commuteWindow,
+      faculty: updatedUser.faculty,
+      program: updatedUser.program,
+      availabilityWindow: updatedUser.availabilityWindow,
     });
   } catch (error) {
     console.log("----------->", error);
